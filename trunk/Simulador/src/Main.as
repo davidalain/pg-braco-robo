@@ -50,15 +50,7 @@ package {
 			this.interval.type = TextFieldType.INPUT;
 			this.interval.text = this.timerInterval.toString ();
 			this.addChild (this.interval);
-			
-			/* Simulação
-			for (var i:int = 0; i < 500; i++) {
-				var a:int = Math.round (Math.random () * 2);
-				var d:Number = Math.round (Math.random () * (10 - (-10)) + (-10));
-				var task:Task = new Task (a, d);
-				this.tasks.push (task);
-			}*/
-			
+						
 			this.stage.align = StageAlign.TOP_LEFT;
 			this.stage.scaleMode = StageScaleMode.NO_SCALE;
 			
@@ -81,10 +73,10 @@ package {
 		
 		private function onTimer(e:TimerEvent):void {
 			//Simulação
-			var a:int = Math.round (Math.random () * 2);
+			/*var a:int = Math.round (Math.random () * 2);
 			var d:Number = Math.round (Math.random () * (10 - (-10)) + (-10));
 			var t:Task = new Task (a, d);
-			this.tasks.push (t);
+			this.tasks.push (t);*/
 			
 			if (this.tasks.length > 0) {
 				var task:Task = this.tasks.shift ();
@@ -100,25 +92,17 @@ package {
 			trace ("onEndRotate", Math.round (e.distances[0]));
 			
 			if (e.distances[0] < 40) {
-				
+				// TODO
 			}
 		}
 		
 		private function onDadoCliente(e:ControleServerSocketEvent):void {
-			// TODO Criar fila de execução e definir protocolo
 			
 			var task:Task = new Task ();
 			task.axis = int (e.dado.split (";")[0]);
 			task.degree = Number (e.dado.split (";")[1]);
 			
-			this.tasks.push (task);
-			
-			/*switch (task.axis) {
-				case 0: this.arm.rotateBase (dado.degree); break;
-				case 1: this.arm.rotateArm (dado.degree); break;
-				case 2: this.arm.rotateSubArm (dado.degree); break;
-			}*/
-			
+			this.tasks.push (task);			
 		}
 		
 		private function onConectado(e:ControleServerSocketEvent):void {
