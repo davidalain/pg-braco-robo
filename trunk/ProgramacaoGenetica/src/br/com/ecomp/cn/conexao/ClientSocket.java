@@ -5,8 +5,14 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import br.com.ecomp.cn.pg.BracoRoboPG;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
 
+
+/**
+ * @authors David Alain 
+ *
+ */
 public class ClientSocket {
 
 	private static ClientSocket instance;
@@ -14,17 +20,14 @@ public class ClientSocket {
 	private static DataOutputStream transmissaoServidor;
 	private static BufferedReader recepcaoServidor;
 	
-	private ClientSocket(){
-		
-	}
+	private ClientSocket(){}
 	
 	public static ClientSocket getInstance(){
-		
 		if(instance == null){
 			try{
 				
 				instance = new ClientSocket();
-				Socket clienteSocket = new Socket("192.168.100.1", 9000);
+				Socket clienteSocket = new Socket(BracoRoboPG.IP_SERVIDOR, BracoRoboPG.PORTA_SERVIDOR);
 				
 				transmissaoServidor = new DataOutputStream(clienteSocket
 						.getOutputStream());
@@ -32,6 +35,7 @@ public class ClientSocket {
 				recepcaoServidor = new BufferedReader(
 						new InputStreamReader(clienteSocket.getInputStream()));
 				
+				System.out.println("Conectou a "+BracoRoboPG.IP_SERVIDOR+":"+BracoRoboPG.PORTA_SERVIDOR);
 			}catch (Exception e) {
 				throw new Error(e.getMessage());
 			}
@@ -41,31 +45,32 @@ public class ClientSocket {
 	}
 
 	public double calcularDistancia() {
-		double retorno = Double.MAX_VALUE;
+		System.out.print("calculaDistancia");
+		double dist = Double.MAX_VALUE;
 		try{
-			transmissaoServidor.writeBytes("#99#\n");
-			while(!recepcaoServidor.ready()){
+			
+			transmissaoServidor.writeBytes("dist;");
+			if(!recepcaoServidor.ready()){
 				String resposta = recepcaoServidor.readLine();
-				String[] partes = resposta.split("#");
-				retorno = Double.parseDouble(partes[0]);
+				dist = Double.parseDouble(resposta);
 			}
 			
 		}catch (Exception e) {
 			throw new Error(e.getMessage());
 		}
-		
-		return retorno;
+		System.out.println(" "+dist);
+		return dist;
 	}
 	
 	public int executarOperacao(Operacao op){
-		
+		System.out.println("executarOperacao");
 		int retorno = -1;
 		try{
-			transmissaoServidor.writeBytes("#" + op.getVertebra() + "#" + op.getValor() + '\n');
+			
+			transmissaoServidor.writeBytes(op.getVertebra() + ";" + op.getValor());
 			while(!recepcaoServidor.ready()){
 				String resposta = recepcaoServidor.readLine();
-				String[] partes = resposta.split("#");
-				retorno = Integer.parseInt(partes[0]);
+				retorno = Integer.parseInt(resposta);
 			}
 			
 		}catch (Exception e) {

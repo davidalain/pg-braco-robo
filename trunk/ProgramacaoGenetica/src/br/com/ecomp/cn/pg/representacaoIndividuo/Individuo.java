@@ -5,12 +5,16 @@ import java.util.LinkedList;
 import br.com.ecomp.cn.conexao.ClientSocket;
 import br.com.ecomp.cn.pg.BracoRoboPG;
 
+/**
+ * @authors David Alain e Leandro Honorato 
+ *
+ */
 public class Individuo {
 	
 	private LinkedList<Operacao> listaOperacoes;
 	
 	private boolean avaliado;
-	private double fitness;
+	private double[] fitness;
 	
 	private boolean possuiOperacaoInvalida;
 
@@ -18,21 +22,27 @@ public class Individuo {
 		avaliado = false;
 		possuiOperacaoInvalida = false;
 		listaOperacoes = new LinkedList<Operacao>();
+		fitness = new double[2];
 	}
 
-	public double avaliarIndividuo () //É o fitness
+	public double[] avaliarIndividuo () //É o fitness
 	{
-		for(Operacao op : listaOperacoes){
-			int sucesso = ClientSocket.getInstance().executarOperacao(op);
-			if(sucesso == 0){
-				possuiOperacaoInvalida = true;
-				return Double.MAX_VALUE;
-			}
-		}
 		
 		if(!avaliado){
-			fitness = ClientSocket.getInstance().calcularDistancia();
-			avaliado = true;
+			for(Operacao op : listaOperacoes){
+				int sucesso = ClientSocket.getInstance().executarOperacao(op);
+				if(sucesso == 0){
+					possuiOperacaoInvalida = true;
+					fitness[0] = Double.MAX_VALUE;
+				}
+			}
+			
+			if(!possuiOperacaoInvalida){
+				fitness[0] = ClientSocket.getInstance().calcularDistancia();
+				avaliado = true;
+			}
+			
+			fitness[1] = listaOperacoes.size();
 		}
 		
 		return fitness;
@@ -49,6 +59,7 @@ public class Individuo {
 
 	public void setListaOperacoes(LinkedList<Operacao> listaOperacoes) {
 		this.listaOperacoes = listaOperacoes;
+		avaliado = false;
 	}
 	
 	public Individuo clone(){

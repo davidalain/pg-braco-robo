@@ -2,7 +2,10 @@ package br.com.ecomp.cn.pg.operadores;
 
 import br.com.ecomp.cn.pg.representacaoIndividuo.Individuo;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
-
+/**
+ * @authors David Alain e Leandro Honorato 
+ *
+ */
 public class Operadores {
 
 	public static Individuo[] recombinacao ( Individuo individuo1, Individuo individuo2 )
