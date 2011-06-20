@@ -5,6 +5,7 @@ package br.poli.computacaonatural {
 	import away3d.containers.View3D;
 	import away3d.core.base.Mesh;
 	import away3d.core.base.Object3D;
+	import away3d.core.draw.ScreenVertex;
 	import away3d.core.filter.FogFilter;
 	import away3d.core.filter.ZDepthFilter;
 	import away3d.core.render.BasicRenderer;
@@ -260,6 +261,7 @@ package br.poli.computacaonatural {
 		
 		public function rotateBase (ang:Number):void {
 			//this.pGeral.rotationY += ang;
+			trace ("this.armModel.objectWidth", this.armModel.objectWidth);
 			this.armModel.rotationY += ang;
 			
 			var max:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "base").@maxLimitAng);
@@ -320,12 +322,17 @@ package br.poli.computacaonatural {
 		public function release (vector:Vector3D = null):void {
 			if (this.draggedItem != null) {
 				var rad:Number = this.degreeToRadian (this.armModel.rotationY);
+								
+				var sv:ScreenVertex = this.camera.screen(this.reference);
+				var globalX:Number = sv.x + this.view.x;
+				var globalY:Number = sv.y + this.view.y;
+				var globalZ:Number = sv.z + this.view.y;
 				
 				// TODO Calcular raio correto para soltar na posição correta
 				var radius:Number = 300;
 				
-				var px:Number = -Math.sin (rad) * radius;
-				var pz:Number = -Math.cos (rad) * radius;
+				var px:Number = sv.x; // -Math.sin (rad) * radius;
+				var pz:Number = sv.z; // -Math.cos (rad) * radius;
 				
 				this.draggedItem.x = px; // Number (this.xmlConfig.config.objects.object.(@id == this.draggedItem.elementID.toString()).@x);
 				this.draggedItem.y = 0; // Number (this.xmlConfig.config.objects.object.(@id == this.draggedItem.elementID.toString()).@y);
