@@ -13,7 +13,7 @@ public class BracoRoboPG {
 
 	public static final int NUMERO_MAXIMO_OPERACOES = 400;
 	public static final int TAMANHO_POPULACAO = 1000;
-	public static final int NUMERO_MAXIMO_GERACOES = 40;
+	public static final int NUMERO_MAXIMO_GERACOES = 20;
 	public static final int ANGULO_MAXIMO = 20;
 	public static final int GRAUS_DE_LIBERDADE = 3;
 	
