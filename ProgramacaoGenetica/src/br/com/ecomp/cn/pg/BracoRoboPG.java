@@ -1,4 +1,5 @@
 package br.com.ecomp.cn.pg;
+import br.com.ecomp.cn.conexao.ClientSocket;
 import br.com.ecomp.cn.pg.operadores.Operadores;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Individuo;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
@@ -11,16 +12,19 @@ import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
 public class BracoRoboPG {
 
 	public static final int NUMERO_MAXIMO_OPERACOES = 400;
-	public static final int TAMANHO_POPULACAO = 30;
-	public static final int NUMERO_MAXIMO_GERACOES = 4000;
+	public static final int TAMANHO_POPULACAO = 1000;
+	public static final int NUMERO_MAXIMO_GERACOES = 40;
 	public static final int ANGULO_MAXIMO = 20;
+	public static final int GRAUS_DE_LIBERDADE = 3;
 	
-	public static final String IP_SERVIDOR = "192.168.0.103";
+	public static final double TAXA_RECOMBINACAO = 0.80;
+	public static final double TAXA_MUTACAO = 0.05;
+	
+	public static final String IP_SERVIDOR = "192.168.0.129";
 	public static final int PORTA_SERVIDOR = 6667;
 	
 	private Individuo[] populacao;
-	private Individuo melhor;
-	private int numeroGeracoes;
+	private int geracaoAtual;
 	
 	private void inicializaPopulacao(){
 		populacao = new Individuo[TAMANHO_POPULACAO];
@@ -28,36 +32,68 @@ public class BracoRoboPG {
 		for(int i = 0 ; i < TAMANHO_POPULACAO ; ++i){
 			populacao[i] = gerarIndividuo();
 		}
-		
-		melhor = populacao[0];
 	}
 	
 	private Individuo gerarIndividuo() {
 		
 		Individuo novo = new Individuo();
-		int quantidadeOperacoes = Math.round(new Float(Math.random() * (NUMERO_MAXIMO_OPERACOES - 1)).floatValue());
+		int quantidadeOperacoes = BracoRoboPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - 10)) + 6;
 		
 		for(int i = 0 ; i < quantidadeOperacoes ; ++i){
-			novo.getListaOperacoes().add(this.gerarOperacao());
+			novo.adicionarOperacao(this.gerarOperacao());
 		}
 		
 		return novo;
 	}
+	
+//	private Individuo gerarIndividuo() {
+//		
+//		Individuo[] novo = new Individuo[GRAUS_DE_LIBERDADE];
+//		int quantidadeOperacoes = BracoRoboPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - 10)) + 6;
+//		
+//		for(int i = 0 ; i < novo.length ; ++i){
+//			novo[i] = new Individuo();
+//		}
+//		
+//		for(int i = 0 ; i < quantidadeOperacoes ; ++i){
+//			
+//			for(int j = 0 ; j < novo.length ; ++j){
+//				
+//				novo[j].adicionarOperacao(this.gerarOperacao(j));
+//				novo = this.ordenaPeloFitness(novo);
+//				
+//				for(int k = 1 ; k < novo.length ; ++k){
+//					novo[k] = novo[0];
+//				}
+//				
+//			}
+//		}
+//		
+//		return novo[0];
+//	}
 
 	private Operacao gerarOperacao() {
-		int vertebra =  Math.round(new Float(Math.random() * 2).floatValue());
-		int angulo = Math.round(new Float(Math.random() * (ANGULO_MAXIMO + ANGULO_MAXIMO)).floatValue()) - ANGULO_MAXIMO;
+		int vertebra =  BracoRoboPG.arredonda(Math.random() * (GRAUS_DE_LIBERDADE - 1));
+		int angulo = BracoRoboPG.arredonda(Math.random() * (ANGULO_MAXIMO + ANGULO_MAXIMO)) - ANGULO_MAXIMO;
 		return new Operacao(vertebra, angulo);
 	}
+	
+//	private Operacao gerarOperacao(int vertebra) {
+//		int angulo = BracoRoboPG.arredonda(Math.random() * (ANGULO_MAXIMO + ANGULO_MAXIMO)) - ANGULO_MAXIMO;
+//		return new Operacao(vertebra, angulo);
+//	}
 
 	public Individuo buscarSolucao(){
+		
+		//Inicializa o Socket
+		ClientSocket.getInstance();
 		
 		//inicializar População
 		this.inicializaPopulacao();
 		System.out.println("Inicializou a população");
 		
 		//calcular Fitness da População
-		this.avaliarPopulacao();
+		this.avaliaPopulacao();
 		System.out.println("avaliou a população");
 		
 		while ( !this.atingiuCondicaoParada() ) // enquanto não atingir uma condição de parada
@@ -67,36 +103,37 @@ public class BracoRoboPG {
 			//decide se vai fazer mutação ou recombinação
 			//executa a operação
 			
-			int indice1 = (int) (Math.random() * (populacao.length - 1));
-			int indice2 = (int) (Math.random() * (populacao.length - 1));
-			Individuo individuo1 = populacao[indice1];
-			Individuo individuo2 = populacao[indice2];
-			System.out.println("Escolheu os individuos "+indice1+" e "+indice2);
-			
-			Individuo[] novos = new Individuo[2];
-			int condicaoMutacaoRecombinacao = (int) (Math.random() * 1000);
+			int condicaoMutacaoRecombinacao = BracoRoboPG.arredonda(Math.random() * 100);
 			
 			if(condicaoMutacaoRecombinacao%2 == 0){
-				System.out.println("Aplicou mutação");
-				novos[0] = Operadores.mutacao(individuo1);
-				novos[1] = Operadores.mutacao(individuo2);
+				
+				int indiceMinMutacao = BracoRoboPG.arredonda(TAMANHO_POPULACAO - TAMANHO_POPULACAO*TAXA_MUTACAO);
+				
+				for(int i = TAMANHO_POPULACAO - 1 ; i > indiceMinMutacao ; --i){
+					populacao[i] = Operadores.mutacao(populacao[i]);
+				}
+				
 			}else{
-				System.out.println("Aplicou recombinação");
-				novos = Operadores.recombinacao(individuo1, individuo2);
+				
+				int indiceMaxRecombinacao = BracoRoboPG.arredonda(TAXA_RECOMBINACAO*TAMANHO_POPULACAO);
+				
+				for(int i = 0 ; i + 1 < indiceMaxRecombinacao ; ++i){
+					Individuo[] novos = Operadores.recombinacao(populacao[i], populacao[i + 1]);
+					populacao[i] = novos[0];
+					populacao[i + 1] = novos[1];
+				}
 			}
-			numeroGeracoes++;
 			
-			Individuo[] ordenados = this.ordenaPeloFitness(individuo1,individuo2,novos[0],novos[1]);
+			System.out.println("Geração atual: "+geracaoAtual);
+			geracaoAtual++;
 			
-			populacao[indice1] = ordenados[0];
-			populacao[indice2] = ordenados[1];
-			System.out.println("Fez a seleção");
-			
-			this.avaliarPopulacao();
+			this.avaliaPopulacao();
 			System.out.println("Avaliou a população");
+			double[] fitness = populacao[0].avaliarIndividuo();
+			System.out.println("Melhor: fitness = "+fitness[0]+", operações = "+fitness[1]);
 		}
 		
-		return melhor;
+		return populacao[0];
 	}
 
 	private Individuo[] ordenaPeloFitness(Individuo... individuos) {
@@ -108,7 +145,6 @@ public class BracoRoboPG {
 			
 			indiceMelhor = i;
 			Individuo melhorIndividuo = individuos[i];
-			System.out.println("i = "+i);
 			
 			for(int j = i + 1; j < individuos.length ; ++j){
 				
@@ -152,18 +188,17 @@ public class BracoRoboPG {
 	}
 
 	private boolean atingiuCondicaoParada() {
-		return((melhor.avaliarIndividuo()[0] <= 0.01) && (numeroGeracoes == NUMERO_MAXIMO_GERACOES));
+		return((populacao[0].avaliarIndividuo()[0] <= 0.01) && (geracaoAtual >= NUMERO_MAXIMO_GERACOES));
 	}
 
-	private void avaliarPopulacao() {
+	private void avaliaPopulacao() {
 
-		for(int i = 0 ; i < TAMANHO_POPULACAO ; ++i){
-			Individuo atual = populacao[i];
-			if(temFitnessMelhor(melhor, atual)){
-				melhor = atual;
-			}
-		}
+		populacao = this.ordenaPeloFitness(populacao);
 		
+	}
+	
+	public static int arredonda(double valor){
+		return Math.round(new Float(valor).floatValue());
 	}
 
 	

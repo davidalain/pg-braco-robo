@@ -31,21 +31,28 @@ public class Individuo {
 		if(!avaliado){
 			
 			avaliado = true;
-			for(Operacao op : listaOperacoes){
-				int sucesso = ClientSocket.getInstance().executarOperacao(op);
-				if(sucesso == 0){
-					possuiOperacaoInvalida = true;
-					fitness[0] = Double.MAX_VALUE;
-					break;
-				}
+//			for(Operacao op : listaOperacoes){
+//				int sucesso = ClientSocket.getInstance().executarOperacao(op);
+//				if(sucesso == 0){
+//					possuiOperacaoInvalida = true;
+//					//fitness[0] = Double.MAX_VALUE;
+//					System.out.println("Houve Operação Inválida");
+//				}
+//			}
+			
+			int erro = ClientSocket.getInstance().executarOperacoes(listaOperacoes);
+			if(erro != -1){
+				possuiOperacaoInvalida = true;
 			}
 			
 			if(!possuiOperacaoInvalida){
 				fitness[0] = ClientSocket.getInstance().calcularDistancia();
 			}
 			
-			fitness[1] = listaOperacoes.size();
+			fitness[1] = new Double(listaOperacoes.size());
 		}
+		
+		//System.out.println("fitness: dist = " + fitness[0]+", operacoes = "+fitness[1]);
 		
 		return fitness;
 	}
@@ -55,14 +62,26 @@ public class Individuo {
 		return ((!possuiOperacaoInvalida) && (listaOperacoes.size() <= BracoRoboPG.NUMERO_MAXIMO_OPERACOES));
 	}
 	
-	public LinkedList<Operacao> getListaOperacoes() {
-		return listaOperacoes;
+//	public LinkedList<Operacao> getListaOperacoes() {
+//		return listaOperacoes;
+//	}
+	
+	public void adicionarOperacao(Operacao op){
+		listaOperacoes.add(op);
+	}
+	
+	public Operacao getOperacao(int indice){
+		return listaOperacoes.get(indice);
+	}
+	
+	public int quantidadeOperacoes(){
+		return listaOperacoes.size();
 	}
 
-	public void setListaOperacoes(LinkedList<Operacao> listaOperacoes) {
-		this.listaOperacoes = listaOperacoes;
-		avaliado = false;
-	}
+//	public void setListaOperacoes(LinkedList<Operacao> listaOperacoes) {
+//		this.listaOperacoes = listaOperacoes;
+//		avaliado = false;
+//	}
 	
 	public Individuo clone(){
 		
