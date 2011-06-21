@@ -166,10 +166,10 @@ package {
 				task.degree = Number (e.dado.split (";")[1]);
 				
 				this.tasks.push (task);
-				
+				/*
 				e.cliente.writeUTF ("1");
 				e.cliente.writeUTF ("\n");
-				e.cliente.flush ();
+				e.cliente.flush ();*/
 			
 			}
 			// 54 11 5246-1500
