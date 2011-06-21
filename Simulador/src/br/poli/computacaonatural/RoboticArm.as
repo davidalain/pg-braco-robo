@@ -206,6 +206,11 @@ package br.poli.computacaonatural {
 		public function reset ():void {			
 			this.armModel.primAxis.rotationX = 0;
 			this.armModel.interAxis.rotationX = 0;
+			if (this.draggedItem != null) {
+				this.armModel.interAxis.removeChild (this.draggedItem);
+			}
+			this.draggedItem = null;
+			this.addObject ();
 		}
 		
 		private function addObject ():void {
