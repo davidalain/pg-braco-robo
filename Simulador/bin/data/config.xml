@@ -8,8 +8,9 @@
 		</pivots>
 		<objects>
 			<object id="1" x="400" y="0" z="0" />
-			<!--<object x="-300" y="0" z="300" />
-			<object x="300" y="0" z="100" />-->
+			<!-- <object id="2" x="300" y="0" z="100" />
+			<object id="3" x="200" y="0" z="200" />
+			<object id="4" x="100" y="0" z="-300" /> -->
 		</objects>
 	</config>
 </data>
