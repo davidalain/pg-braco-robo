@@ -22,6 +22,7 @@ package {
 	 * ...
 	 * @author Ricardo Teixeira
 	 */
+	[SWF(width="800", height="600", framerate="60")]
 	public class Main extends Sprite {
 		
 		private var tasks:Vector.<Task>;
