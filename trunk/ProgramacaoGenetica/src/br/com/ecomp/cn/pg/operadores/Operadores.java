@@ -1,5 +1,6 @@
 package br.com.ecomp.cn.pg.operadores;
 
+import br.com.ecomp.cn.pg.BracoRoboPG;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Individuo;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
 /**
@@ -13,28 +14,22 @@ public class Operadores {
 		Individuo novo1 = new Individuo();
 		Individuo novo2 = new Individuo();
 		
-		int tamanhoIndividuo1 = individuo1.getListaOperacoes().size();
-		int tamanhoIndividuo2 = individuo2.getListaOperacoes().size();
+		int tamanhoIndividuo1 = individuo1.quantidadeOperacoes();
+		int tamanhoIndividuo2 = individuo2.quantidadeOperacoes();
 		
-		int indiceMedio = tamanhoIndividuo1 < tamanhoIndividuo2 ? tamanhoIndividuo1 : tamanhoIndividuo2;
-		indiceMedio /= 2;
+		int menorIndice = tamanhoIndividuo1 < tamanhoIndividuo2 ? tamanhoIndividuo1 : tamanhoIndividuo2;
 		
-		int indice = (int) Math.random() * indiceMedio;
+		int indice = BracoRoboPG.arredonda(Math.random() * (menorIndice - 1)) + 1;
 		
-		for(int i = 0 ; i < tamanhoIndividuo1 ; ++i){
-			if(i <= indice){
-				novo1.getListaOperacoes().add(individuo1.getListaOperacoes().get(i));
-			}else{
-				novo2.getListaOperacoes().add(individuo1.getListaOperacoes().get(i));
-			}
+		for(int i = 0 ; i < indice ; ++i){
+			novo1.adicionarOperacao(individuo1.getOperacao(i));
+			novo2.adicionarOperacao(individuo2.getOperacao(i));
 		}
-		
-		for(int i = 0 ; i < tamanhoIndividuo2 ; ++i){
-			if(i <= indice){
-				novo1.getListaOperacoes().add(individuo2.getListaOperacoes().get(i));
-			}else{
-				novo2.getListaOperacoes().add(individuo2.getListaOperacoes().get(i));
-			}
+		for(int i = indice ; i < tamanhoIndividuo1 ; ++i){
+			novo2.adicionarOperacao(individuo1.getOperacao(i));
+		}
+		for(int i = indice ; i < tamanhoIndividuo2 ; ++i){
+			novo1.adicionarOperacao(individuo2.getOperacao(i));
 		}
 		
 		return new Individuo[]{novo1,novo2};
@@ -42,21 +37,20 @@ public class Operadores {
 	
 	public static Individuo mutacao ( Individuo individuo )
 	{
-		
 		Individuo individuoMutado = individuo.clone();
-		int indiceMaximo = individuoMutado.getListaOperacoes().size() - 1;
+		int indiceMaximo = individuoMutado.quantidadeOperacoes() - 1;
 		
-		int posicaoMutacao1 = Math.round( new Float( Math.random() * indiceMaximo ).floatValue());
-		int posicaoMutacao2 = Math.round( new Float( Math.random() * indiceMaximo ).floatValue());
+		int posicaoMutacao1 = BracoRoboPG.arredonda(Math.random() * indiceMaximo);
+		int posicaoMutacao2 = BracoRoboPG.arredonda(Math.random() * indiceMaximo);
 		
-		Operacao op1 = individuoMutado.getListaOperacoes().get(posicaoMutacao1);
-		Operacao op2 = individuoMutado.getListaOperacoes().get(posicaoMutacao2);
+		Operacao op1 = individuoMutado.getOperacao(posicaoMutacao1);
+		Operacao op2 = individuoMutado.getOperacao(posicaoMutacao2);
 		
-		int vertebraTemp = op1.getVertebra();
-		op1.setVertebra(op2.getVertebra());
-		op2.setVertebra(vertebraTemp);
+		int vertebraTemp = op1.getEixo();
+		op1.setEixo(op2.getEixo());
+		op2.setEixo(vertebraTemp);
 		
-		return null;
+		return individuoMutado;
 	}
 	
 }

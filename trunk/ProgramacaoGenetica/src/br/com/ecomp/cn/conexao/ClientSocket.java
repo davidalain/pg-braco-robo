@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.LinkedList;
 
 import br.com.ecomp.cn.pg.BracoRoboPG;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
@@ -54,7 +55,7 @@ public class ClientSocket {
 			if(!recepcaoServidor.ready()){
 				String resposta = recepcaoServidor.readLine();
 				dist = Double.parseDouble(resposta);
-				System.out.println("distancia: "+dist);
+//				System.out.println("distancia: "+dist);
 			}
 			
 		}catch (Exception e) {
@@ -64,12 +65,37 @@ public class ClientSocket {
 	}
 	
 	public int executarOperacao(Operacao op){
-		int retorno = -1;
+		int retorno = 1;
 		try{
 			
-			transmissaoServidor.writeBytes(";"+op.getVertebra() + ";" + op.getValor());
+			transmissaoServidor.writeBytes(";"+op.getEixo() + ";" + op.getAngulo());
 			transmissaoServidor.flush();
+			
 			//System.out.println(";"+op.getVertebra() + ";" + op.getValor());
+			if(!recepcaoServidor.ready()){
+				String resposta = recepcaoServidor.readLine();
+				retorno = Integer.parseInt(""+resposta.charAt(2));
+			}
+			
+		}catch (Exception e) {
+			throw new Error(e.getMessage());
+		}
+		
+		return retorno;
+	}
+	
+	public int executarOperacoes(LinkedList<Operacao> operacoes){
+		int retorno = 1;
+		try{
+			
+			String comando = "";
+			for(Operacao op : operacoes){
+				comando += "#"+op.getEixo() + ";" + op.getAngulo();
+			}
+			
+			transmissaoServidor.writeBytes(comando);
+			transmissaoServidor.flush();
+			
 			if(!recepcaoServidor.ready()){
 				String resposta = recepcaoServidor.readLine();
 				retorno = Integer.parseInt(""+resposta.charAt(2));

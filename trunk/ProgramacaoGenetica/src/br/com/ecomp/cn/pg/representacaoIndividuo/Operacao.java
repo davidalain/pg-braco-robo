@@ -6,28 +6,28 @@ package br.com.ecomp.cn.pg.representacaoIndividuo;
  */
 public class Operacao {
 
-	private int vertebra;
-	private int valor;
+	private int eixo;
+	private int angulo;
 	
 	public Operacao(int vertebra, int angulo){
-		this.vertebra = vertebra;
-		this.valor = angulo;
+		this.eixo = vertebra;
+		this.angulo = angulo;
 	}
 	
-	public int getVertebra() {
-		return vertebra;
+	public int getEixo() {
+		return eixo;
 	}
 
-	public void setVertebra(int vertebra) {
-		this.vertebra = vertebra;
+	public void setEixo(int eixo) {
+		this.eixo = eixo;
 	}
 
-	public int getValor() {
-		return valor;
+	public int getAngulo() {
+		return angulo;
 	}
 
-	public void setValor(int valor) {
-		this.valor = valor;
+	public void setAngulo(int valor) {
+		this.angulo = valor;
 	}
 
 }
