@@ -10,6 +10,8 @@ package br.poli.computacaonatural.events {
 	public class RoboticArmEvent extends Event {
 		
 		public static const END_ROTATE:String = "endRotate";
+		public static const INVALID_ROTATION:String = "invalidRotation";
+		public static const VALID_ROTATION:String = "validRotation";
 		public static const COLLISION:String = "collision";
 		
 		private var _distances:Vector.<Number>;
