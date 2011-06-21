@@ -187,7 +187,7 @@ package br.poli.computacaonatural {
 						
 			this.armModel.primAxis.rotationX = Number (this.xmlConfig.config.pivots.pivot.(@id == "arm").@initAng);
 			this.armModel.interAxis.rotationX = Number (this.xmlConfig.config.pivots.pivot.(@id == "subarm").@initAng);	
-			
+						
 			this.addObject ();
 			
 			//cube = new Cube({x:300, y:160, z:-80, width:200, height:200, depth:200});
@@ -201,6 +201,11 @@ package br.poli.computacaonatural {
 			this.cube.z = -80;*/
 			//this.cube.centerPivot ();
 					
+		}
+		
+		public function reset ():void {			
+			this.armModel.primAxis.rotationX = 0;
+			this.armModel.interAxis.rotationX = 0;
 		}
 		
 		private function addObject ():void {
@@ -241,7 +246,7 @@ package br.poli.computacaonatural {
 			this.pJuncao2.rotationX = Number (this.xmlConfig.config.pivots.pivot.(@id == "juncao2").@initAng);
 		}		
 		
-		private	function distances ():Vector.<Number> {
+		public function distances ():Vector.<Number> {
 			var dists:Vector.<Number> = new Vector.<Number>();
 			
 			this.reference = this.armModel.reference;
@@ -261,18 +266,30 @@ package br.poli.computacaonatural {
 		
 		public function rotateBase (ang:Number):void {
 			//this.pGeral.rotationY += ang;
-			trace ("this.armModel.objectWidth", this.armModel.objectWidth);
+			//trace ("this.reference", this.reference.position);
+			
+			if (isNaN (ang)) ang = 0;
+			
 			this.armModel.rotationY += ang;
 			
 			var max:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "base").@maxLimitAng);
 			var min:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "base").@minLimitAng);
 			
+			var event:RoboticArmEvent;
 			if (this.armModel.rotationY > max) {
 				this.armModel.rotationY = max;
-			}			
+				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+			} else {
+				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
+			}
 			if (this.armModel.rotationY < min) {
 				this.armModel.rotationY = min;
+				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+			} else {
+				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
+			this.dispatchEvent (event);
+			
 			// TODO Pegar Caixa
 			/*if (this.distances ()[0] < 40 || this.pegou) {
 				this.pegou = true;
@@ -299,7 +316,7 @@ package br.poli.computacaonatural {
 				var item:ElementModel = this.objects[i];
 				var dist:Number = this.reference.distanceTo (item) - 75;
 				
-				if (dist <= 0) {
+				if (dist <= 0.01) {
 					event = new RoboticArmEvent (RoboticArmEvent.COLLISION , dists, item);
 					this.dispatchEvent ( event );	
 					
@@ -323,16 +340,13 @@ package br.poli.computacaonatural {
 			if (this.draggedItem != null) {
 				var rad:Number = this.degreeToRadian (this.armModel.rotationY);
 								
-				var sv:ScreenVertex = this.camera.screen(this.reference);
-				var globalX:Number = sv.x + this.view.x;
-				var globalY:Number = sv.y + this.view.y;
-				var globalZ:Number = sv.z + this.view.y;
 				
+								
 				// TODO Calcular raio correto para soltar na posição correta
 				var radius:Number = 300;
 				
-				var px:Number = sv.x; // -Math.sin (rad) * radius;
-				var pz:Number = sv.z; // -Math.cos (rad) * radius;
+				var px:Number = -Math.sin (rad) * radius;
+				var pz:Number = -Math.cos (rad) * radius;
 				
 				this.draggedItem.x = px; // Number (this.xmlConfig.config.objects.object.(@id == this.draggedItem.elementID.toString()).@x);
 				this.draggedItem.y = 0; // Number (this.xmlConfig.config.objects.object.(@id == this.draggedItem.elementID.toString()).@y);
@@ -345,6 +359,8 @@ package br.poli.computacaonatural {
 		
 		public function rotateArm (ang:Number):void {
 			
+			if (isNaN (ang)) ang = 0;
+			
 			this.armModel.primAxis.rotationX += ang;
 			
 			/*this.pGeral.rotationX += ang;
@@ -352,28 +368,48 @@ package br.poli.computacaonatural {
 			var max:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "arm").@maxLimitAng);
 			var min:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "arm").@minLimitAng);
 			
+			var event:RoboticArmEvent;
 			if (this.armModel.primAxis.rotationX > max) {
 				this.armModel.primAxis.rotationX = max;
+				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+			} else {
+				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}			
 			if (this.armModel.primAxis.rotationX < min) {
 				this.armModel.primAxis.rotationX = min;
+				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+			} else {
+				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
+			this.dispatchEvent (event);
 						
 			this.testCollision ();
 		}
 		
 		public function rotateSubArm (ang:Number):void {
+			
+			if (isNaN (ang)) ang = 0;
+			
 			this.armModel.interAxis.rotationX += ang;
 			
 			var max:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "subarm").@maxLimitAng);
 			var min:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "subarm").@minLimitAng);
 			
+			
+			var event:RoboticArmEvent;
 			if (this.armModel.interAxis.rotationX > max) {
 				this.armModel.interAxis.rotationX = max;
+				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+			} else {
+				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}			
 			if (this.armModel.interAxis.rotationX < min) {
 				this.armModel.interAxis.rotationX = min;
+				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+			} else {
+				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
+			this.dispatchEvent (event);
 			
 			this.testCollision ();
 		}
@@ -502,6 +538,16 @@ package br.poli.computacaonatural {
 		private function onResize(event:Event = null):void {
 			this.view.x = this.stage.stageWidth / 2;
 			this.view.y = this.stage.stageHeight / 2;
+		}
+		
+		override public function toString ():String {
+			var saida:String = "";
+			if (this.armModel) { 
+				saida = "Base: " + this.armModel.rotationY;
+				saida += "\nEixo 0: " + this.armModel.primAxis.rotationX;
+				saida += "\nEixo 1: " + this.armModel.interAxis.rotationX;
+			}
+			return saida;
 		}
 	}
 

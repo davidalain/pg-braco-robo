@@ -22,13 +22,15 @@ package br.poli.computacaonatural.model3d {
 			this.sphere = new Sphere ();
 			this.sphere.material = sphereMaterial;
 			this.sphere.radius = 35;
+			this.sphere.segmentsW = 15;
+			this.sphere.segmentsH = 5;
 			
 			this.cylinder = new Cylinder ();
 			this.cylinder.material = cylMaterial;
 			this.cylinder.radius = 20;
 			this.cylinder.height = 200;
 			this.cylinder.segmentsW = 10;
-			this.cylinder.segmentsH = 3;
+			this.cylinder.segmentsH = 6;
 			this.cylinder.y = this.cylinder.height / 2;
 			
 			this.addChild (this.sphere);

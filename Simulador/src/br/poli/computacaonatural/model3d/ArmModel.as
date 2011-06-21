@@ -18,7 +18,7 @@ package br.poli.computacaonatural.model3d {
 			this.base = new Cylinder ();
 			this.base.material =  new WireColorMaterial (0x3D3D3D);
 			this.base.radius = 70;
-			this.base.height = 80;
+			this.base.height = 200;
 			this.base.y = this.base.height/2;
 			
 			this.arm.y = this.base.height;
