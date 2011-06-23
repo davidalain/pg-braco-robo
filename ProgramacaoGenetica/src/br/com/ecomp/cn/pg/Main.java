@@ -1,6 +1,7 @@
 package br.com.ecomp.cn.pg;
 
 import br.com.ecomp.cn.pg.representacaoIndividuo.Individuo;
+import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
 
 
 public class Main {
@@ -9,11 +10,14 @@ public class Main {
 		
 		BracoRoboPG br = new BracoRoboPG();
 		Individuo solucao = br.buscarSolucao();
-		
-		System.out.println("\nA melhor solução encontrada foi:");
+
+		System.out.println("\nA melhor solução encontrada foi:\n\n");
+		System.out.println("LinkedList<Operacao> operacoes = new LinkedList<Operacao>();");
 		for(int i = 0 ; i < solucao.quantidadeOperacoes() ; ++i){
-			System.out.println("Eixo: "+ solucao.getOperacao(i).getEixo() + ", Ângulo: "+solucao.getOperacao(i).getAngulo());
+			Operacao op = solucao.getOperacao(i);
+			System.out.println("operacoes.add(new Operacao("+op.getEixo()+", "+op.getAngulo()+"));");
 		}
+		System.out.println("ClientSocket.getInstance().executarOperacoes(operacoes);");
 		
 	}
 	
