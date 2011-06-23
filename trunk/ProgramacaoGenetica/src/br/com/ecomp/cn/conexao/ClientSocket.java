@@ -46,17 +46,27 @@ public class ClientSocket {
 	}
 
 	public double calcularDistancia() {
-		double dist = Double.MAX_VALUE;
+		double dist = 1000.2;
 		try{
-			
-			transmissaoServidor.writeBytes(";dist;");
+			System.out.println("A");
+			transmissaoServidor.writeBytes("#dist;");
 			transmissaoServidor.flush();
+			System.out.println("B");
 			
-			if(!recepcaoServidor.ready()){
-				String resposta = recepcaoServidor.readLine();
-				dist = Double.parseDouble(resposta);
-//				System.out.println("distancia: "+dist);
+			
+			
+			while(!recepcaoServidor.ready()){
+				
 			}
+			
+			//if(recepcaoServidor.ready()){
+				System.out.println("C");
+				String resposta = recepcaoServidor.readLine();
+				int indiceFinal = (resposta.length() - 2) > 3 ? (resposta.length() - 2) : 3;
+				System.out.println("reposta: "+resposta);
+				resposta = resposta.substring(2, indiceFinal);
+				dist = Double.parseDouble(resposta);
+			//}
 			
 		}catch (Exception e) {
 			throw new Error(e.getMessage());
@@ -71,11 +81,14 @@ public class ClientSocket {
 			transmissaoServidor.writeBytes(";"+op.getEixo() + ";" + op.getAngulo());
 			transmissaoServidor.flush();
 			
-			//System.out.println(";"+op.getVertebra() + ";" + op.getValor());
-			if(!recepcaoServidor.ready()){
+			
+			while(!recepcaoServidor.ready()){
+				
+			}
+			//if(recepcaoServidor.ready()){
 				String resposta = recepcaoServidor.readLine();
 				retorno = Integer.parseInt(""+resposta.charAt(2));
-			}
+			//}
 			
 		}catch (Exception e) {
 			throw new Error(e.getMessage());
@@ -96,10 +109,12 @@ public class ClientSocket {
 			transmissaoServidor.writeBytes(comando);
 			transmissaoServidor.flush();
 			
-			if(!recepcaoServidor.ready()){
-				String resposta = recepcaoServidor.readLine();
-				retorno = Integer.parseInt(""+resposta.charAt(2));
+			while(!recepcaoServidor.ready()){
+				
 			}
+			
+			String resposta = recepcaoServidor.readLine();
+			retorno = Integer.parseInt(""+resposta.charAt(2));
 			
 		}catch (Exception e) {
 			throw new Error(e.getMessage());

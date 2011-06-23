@@ -14,7 +14,7 @@ public class Individuo {
 	private LinkedList<Operacao> listaOperacoes;
 	
 	private boolean avaliado;
-	private double[] fitness;
+	private Fitness fitness;
 	
 	private boolean possuiOperacaoInvalida;
 
@@ -22,10 +22,10 @@ public class Individuo {
 		avaliado = false;
 		possuiOperacaoInvalida = false;
 		listaOperacoes = new LinkedList<Operacao>();
-		fitness = new double[2];
+		fitness = new Fitness();
 	}
 
-	public double[] avaliarIndividuo () //É o fitness
+	public Fitness avaliarIndividuo () //É o fitness
 	{
 		
 		if(!avaliado){
@@ -45,11 +45,9 @@ public class Individuo {
 				possuiOperacaoInvalida = true;
 			}
 			
-			if(!possuiOperacaoInvalida){
-				fitness[0] = ClientSocket.getInstance().calcularDistancia();
-			}
-			
-			fitness[1] = new Double(listaOperacoes.size());
+			fitness.distancia = ClientSocket.getInstance().calcularDistancia();
+			fitness.quantidadeOperacoes = listaOperacoes.size();
+			System.out.println("d: "+fitness.distancia + ", op: "+fitness.quantidadeOperacoes);
 		}
 		
 		//System.out.println("fitness: dist = " + fitness[0]+", operacoes = "+fitness[1]);
@@ -83,14 +81,14 @@ public class Individuo {
 //		avaliado = false;
 //	}
 	
-	public Individuo clone(){
-		
-		Individuo individuoClone = new Individuo();
-		for(Operacao op : this.listaOperacoes){
-			individuoClone.listaOperacoes.add(op);
-		}
-		
-		return individuoClone;
-	}
+//	public Individuo clone(){
+//		
+//		Individuo individuoClone = new Individuo();
+//		for(Operacao op : this.listaOperacoes){
+//			individuoClone.listaOperacoes.add(op);
+//		}
+//		
+//		return individuoClone;
+//	}
 	
 }

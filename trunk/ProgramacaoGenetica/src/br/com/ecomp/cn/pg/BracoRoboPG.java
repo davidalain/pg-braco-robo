@@ -1,6 +1,7 @@
 package br.com.ecomp.cn.pg;
 import br.com.ecomp.cn.conexao.ClientSocket;
 import br.com.ecomp.cn.pg.operadores.Operadores;
+import br.com.ecomp.cn.pg.representacaoIndividuo.Fitness;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Individuo;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
 
@@ -11,16 +12,16 @@ import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
  */
 public class BracoRoboPG {
 
-	public static final int NUMERO_MAXIMO_OPERACOES = 400;
-	public static final int TAMANHO_POPULACAO = 1000;
-	public static final int NUMERO_MAXIMO_GERACOES = 20;
-	public static final int ANGULO_MAXIMO = 20;
+	public static final int NUMERO_MAXIMO_OPERACOES = 10;
+	public static final int TAMANHO_POPULACAO = 5;
+	public static final int NUMERO_MAXIMO_GERACOES = 5;
+	public static final int ANGULO_MAXIMO_INICIAL = 40;
 	public static final int GRAUS_DE_LIBERDADE = 3;
 	
 	public static final double TAXA_RECOMBINACAO = 0.80;
 	public static final double TAXA_MUTACAO = 0.05;
 	
-	public static final String IP_SERVIDOR = "192.168.0.129";
+	public static final String IP_SERVIDOR = "169.254.43.144";
 	public static final int PORTA_SERVIDOR = 6667;
 	
 	private Individuo[] populacao;
@@ -34,54 +35,54 @@ public class BracoRoboPG {
 		}
 	}
 	
-	private Individuo gerarIndividuo() {
-		
-		Individuo novo = new Individuo();
-		int quantidadeOperacoes = BracoRoboPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - 10)) + 6;
-		
-		for(int i = 0 ; i < quantidadeOperacoes ; ++i){
-			novo.adicionarOperacao(this.gerarOperacao());
-		}
-		
-		return novo;
-	}
-	
 //	private Individuo gerarIndividuo() {
 //		
-//		Individuo[] novo = new Individuo[GRAUS_DE_LIBERDADE];
+//		Individuo novo = new Individuo();
 //		int quantidadeOperacoes = BracoRoboPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - 10)) + 6;
 //		
-//		for(int i = 0 ; i < novo.length ; ++i){
-//			novo[i] = new Individuo();
-//		}
-//		
 //		for(int i = 0 ; i < quantidadeOperacoes ; ++i){
-//			
-//			for(int j = 0 ; j < novo.length ; ++j){
-//				
-//				novo[j].adicionarOperacao(this.gerarOperacao(j));
-//				novo = this.ordenaPeloFitness(novo);
-//				
-//				for(int k = 1 ; k < novo.length ; ++k){
-//					novo[k] = novo[0];
-//				}
-//				
-//			}
+//			novo.adicionarOperacao(this.gerarOperacao());
 //		}
 //		
-//		return novo[0];
+//		return novo;
 //	}
+	
+	private Individuo gerarIndividuo() {
+		
+		Individuo[] novo = new Individuo[GRAUS_DE_LIBERDADE];
+		int quantidadeOperacoes = BracoRoboPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - 10)) + 6;
+		
+		for(int i = 0 ; i < novo.length ; ++i){
+			novo[i] = new Individuo();
+		}
+		
+		for(int i = 0 ; i < quantidadeOperacoes ; ++i){
+			
+			for(int j = 0 ; j < novo.length ; ++j){
+				
+				novo[j].adicionarOperacao(this.gerarOperacao(j));
+				novo = this.ordenaPeloFitness(novo);
+				
+				for(int k = 1 ; k < novo.length ; ++k){
+					novo[k] = novo[0];
+				}
+				
+			}
+		}
+		
+		return novo[0];
+	}
 
-	private Operacao gerarOperacao() {
+	public Operacao gerarOperacao() {
 		int vertebra =  BracoRoboPG.arredonda(Math.random() * (GRAUS_DE_LIBERDADE - 1));
-		int angulo = BracoRoboPG.arredonda(Math.random() * (ANGULO_MAXIMO + ANGULO_MAXIMO)) - ANGULO_MAXIMO;
+		int angulo = BracoRoboPG.arredonda(Math.random() * (ANGULO_MAXIMO_INICIAL + ANGULO_MAXIMO_INICIAL)) - ANGULO_MAXIMO_INICIAL;
 		return new Operacao(vertebra, angulo);
 	}
 	
-//	private Operacao gerarOperacao(int vertebra) {
-//		int angulo = BracoRoboPG.arredonda(Math.random() * (ANGULO_MAXIMO + ANGULO_MAXIMO)) - ANGULO_MAXIMO;
-//		return new Operacao(vertebra, angulo);
-//	}
+	private Operacao gerarOperacao(int vertebra) {
+		int angulo = BracoRoboPG.arredonda(Math.random() * (ANGULO_MAXIMO_INICIAL + ANGULO_MAXIMO_INICIAL)) - ANGULO_MAXIMO_INICIAL;
+		return new Operacao(vertebra, angulo);
+	}
 
 	public Individuo buscarSolucao(){
 		
@@ -128,9 +129,9 @@ public class BracoRoboPG {
 			geracaoAtual++;
 			
 			this.avaliaPopulacao();
-			System.out.println("Avaliou a população");
-			double[] fitness = populacao[0].avaliarIndividuo();
-			System.out.println("Melhor: fitness = "+fitness[0]+", operações = "+fitness[1]);
+			
+			Fitness fitness = populacao[0].avaliarIndividuo();
+			System.out.println("Melhor: distancia = "+fitness.distancia+", operações = "+fitness.quantidadeOperacoes);
 		}
 		
 		return populacao[0];
@@ -168,19 +169,22 @@ public class BracoRoboPG {
 
 	private boolean temFitnessMelhor( Individuo melhorIndividuo, Individuo atual ) {
 		
-		double[] fitnessMelhor = melhorIndividuo.avaliarIndividuo();
-		double[] fitnessAtual = atual.avaliarIndividuo();
+		Fitness fitnessMelhor = melhorIndividuo.avaliarIndividuo();
+		Fitness fitnessAtual = atual.avaliarIndividuo();
 		
-		boolean menorIgual = true;
+		boolean menorIgual = false;
 		boolean menor = false;
 		
-		for(int i = 0 ; i < fitnessMelhor.length ; ++i){
-			if(fitnessMelhor[i] < fitnessAtual[i]){
-				menorIgual = false;
-			}
-			if(fitnessMelhor[i] > fitnessAtual[i] ){
-				menor = true;
-			}
+		if(	(fitnessAtual.distancia <= fitnessMelhor.distancia) &&
+			(fitnessAtual.quantidadeOperacoes <= fitnessMelhor.quantidadeOperacoes))
+		{
+			menorIgual = true;
+		}
+		
+		if(	(fitnessAtual.distancia < fitnessMelhor.distancia) ||
+			(fitnessAtual.quantidadeOperacoes < fitnessMelhor.quantidadeOperacoes))
+		{
+			menor = true;
 		}
 		
 		return (menorIgual && menor);
@@ -188,13 +192,12 @@ public class BracoRoboPG {
 	}
 
 	private boolean atingiuCondicaoParada() {
-		return((populacao[0].avaliarIndividuo()[0] <= 0.01) && (geracaoAtual >= NUMERO_MAXIMO_GERACOES));
+		Fitness fitnessMelhor = populacao[0].avaliarIndividuo();
+		return((fitnessMelhor.distancia <= 0.01) && (geracaoAtual >= NUMERO_MAXIMO_GERACOES));
 	}
 
 	private void avaliaPopulacao() {
-
 		populacao = this.ordenaPeloFitness(populacao);
-		
 	}
 	
 	public static int arredonda(double valor){

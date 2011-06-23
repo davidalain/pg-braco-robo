@@ -35,9 +35,9 @@ public class Operadores {
 		return new Individuo[]{novo1,novo2};
 	}
 	
-	public static Individuo mutacao ( Individuo individuo )
+	public static Individuo mutacao ( Individuo individuoMutado )
 	{
-		Individuo individuoMutado = individuo.clone();
+//		Individuo individuoMutado = individuo.clone();
 		int indiceMaximo = individuoMutado.quantidadeOperacoes() - 1;
 		
 		int posicaoMutacao1 = BracoRoboPG.arredonda(Math.random() * indiceMaximo);
