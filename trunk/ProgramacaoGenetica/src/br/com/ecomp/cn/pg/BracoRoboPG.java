@@ -118,6 +118,7 @@ public class BracoRoboPG {
 			int indiceRamdom1 = BracoRoboPG.arredonda(Math.random() * (TAMANHO_POPULACAO - 1));
 			int indiceRamdom2 = BracoRoboPG.arredonda(Math.random() * (TAMANHO_POPULACAO - 1));
 			
+			indiceInter = 0;
 			while ( indiceInter < TAMANHO_POPULACAO )
 			{
 				double condicaoMutacaoRecombinacao = Math.random();
