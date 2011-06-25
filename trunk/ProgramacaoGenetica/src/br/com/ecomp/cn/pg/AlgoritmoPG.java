@@ -14,6 +14,7 @@ import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
 public class AlgoritmoPG {
 
 	public static final int NUMERO_MAXIMO_OPERACOES = 30;
+	public static final int NUMERO_MINIMO_OPERACOES = 10;
 	public static final int TAMANHO_POPULACAO = 1000;
 	public static final int NUMERO_MAXIMO_GERACOES = 30;
 	public static final int ANGULO_MAXIMO_INICIAL = 10;
@@ -43,49 +44,48 @@ public class AlgoritmoPG {
 		}
 	}
 	
-	private Individuo gerarIndividuo() {
-		
-		Individuo novo = new Individuo();
-		int quantidadeOperacoes = AlgoritmoPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - 10)) + 6;
-		
-		for(int i = 0 ; i < quantidadeOperacoes ; ++i){
-			novo.adicionarOperacao(this.gerarOperacao());
-		}
-		
-		return novo;
-	}
-	
 //	private Individuo gerarIndividuo() {
 //		
-//		Individuo[] novo = new Individuo[GRAUS_DE_LIBERDADE];
+//		Individuo novo = new Individuo();
 //		int quantidadeOperacoes = AlgoritmoPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - 10)) + 6;
 //		
-//		for(int i = 0 ; i < novo.length ; ++i){
-//			novo[i] = new Individuo();
+//		for(int i = 0 ; i < quantidadeOperacoes ; ++i){
+//			novo.adicionarOperacao(this.gerarOperacao());
 //		}
 //		
-//		//Gera um indivíduo enviesado pra o caminho correto
-//		//Com uma quantidade de operações com tamanho aleatório ou
-//		//que possua uma distanciaFinal menor que o valor de PRECISAO_DISTANCIA
-//		double dist = Double.MAX_VALUE;
-//		for(int i = 0 ; (i < quantidadeOperacoes) && (dist > PRECISAO_DISTANCIA) ; ++i){
-//			
-//			for(int j = 0 ; j < novo.length ; ++j){
-//				
-//				novo[j].adicionarOperacao(this.gerarOperacao(j));
-//				novo = Operadores.ordenaPeloFitness(novo);
-//				
-//				dist = novo[0].fitness().distanciaFinal;
-//				
-//				for(int k = 1 ; k < novo.length ; ++k){
-//					novo[k] = novo[0];
-//				}
-//				
-//			}
-//		}
-//		
-//		return novo[0];
+//		return novo;
 //	}
+	
+	private Individuo gerarIndividuo() {
+		
+		Individuo[] novo = new Individuo[GRAUS_DE_LIBERDADE];
+		int quantidadeOperacoes = AlgoritmoPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - NUMERO_MINIMO_OPERACOES)) + NUMERO_MINIMO_OPERACOES;
+		
+		for(int i = 0 ; i < novo.length ; ++i){
+			novo[i] = new Individuo();
+		}
+		
+		//Gera um indivíduo enviesado pra o caminho correto
+		//Com uma quantidade de operações com tamanho aleatório ou
+		//que possua uma distanciaFinal menor que o valor de PRECISAO_DISTANCIA
+		double dist = Double.MAX_VALUE;
+		for(int i = 0 ; (i < quantidadeOperacoes) && (dist > PRECISAO_DISTANCIA) ; ++i){
+			
+			for(int j = 0 ; j < GRAUS_DE_LIBERDADE ; ++j){
+				novo[j].adicionarOperacao(this.gerarOperacao(j));
+			}
+			
+			novo = Operadores.ordenaPeloFitness(novo);			
+			
+			for(int k = 1 ; k < novo.length ; ++k){
+				novo[k] = novo[0].clone();
+			}
+			
+			dist = novo[0].fitness().distanciaFinal;
+		}
+		
+		return novo[0];
+	}
 
 	public Operacao gerarOperacao() {
 		int vertebra =  AlgoritmoPG.arredonda(Math.random() * (GRAUS_DE_LIBERDADE - 1));
@@ -161,7 +161,12 @@ public class AlgoritmoPG {
 		
 		int tamanho = individuo.quantidadeOperacoes();
 		for(int i = 0 ; i < tamanho ; ++i){
-			listaOperacoes.add(individuo.getOperacao(i));
+			
+			Operacao op = individuo.getOperacao(i);
+			if(op.getAngulo() != 0){
+				listaOperacoes.add(op);
+			}
+			
 		}
 		
 		for(int i = 0 ; i + 1 < tamanho ; ++i){
