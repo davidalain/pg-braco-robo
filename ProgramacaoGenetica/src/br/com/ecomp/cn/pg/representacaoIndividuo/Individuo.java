@@ -85,14 +85,10 @@ public class Individuo {
 //		avaliado = false;
 //	}
 	
-//	public Individuo clone(){
-//		
-//		Individuo individuoClone = new Individuo();
-//		for(Operacao op : this.listaOperacoes){
-//			individuoClone.listaOperacoes.add(op);
-//		}
-//		
-//		return individuoClone;
-//	}
+	@SuppressWarnings("unchecked")
+	public Individuo clone(){
+		LinkedList<Operacao> novaLista = (LinkedList<Operacao>) listaOperacoes.clone();
+		return new Individuo(novaLista);
+	}
 	
 }

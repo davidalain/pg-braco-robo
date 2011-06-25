@@ -18,9 +18,9 @@ public class Operadores {
 		int tamanhoIndividuo1 = individuo1.quantidadeOperacoes();
 		int tamanhoIndividuo2 = individuo2.quantidadeOperacoes();
 		
-		int menorIndice = tamanhoIndividuo1 < tamanhoIndividuo2 ? tamanhoIndividuo1 : tamanhoIndividuo2;
+		int tamanhoMenor = ( tamanhoIndividuo1 < tamanhoIndividuo2 ) ? tamanhoIndividuo1 : tamanhoIndividuo2;
 		
-		int indice = AlgoritmoPG.arredonda(Math.random() * (menorIndice - 1)) + 1;
+		int indice = AlgoritmoPG.arredonda(Math.random() * (tamanhoMenor - 1));
 		
 		for(int i = 0 ; i < indice ; ++i){
 			novo1.adicionarOperacao(individuo1.getOperacao(i));
