@@ -71,26 +71,28 @@ public class Operadores {
 		
 		todos = ordenaPeloFitness(todos);
 		
+		j = 0;
+		i = 0;
 		
 		//Pega os 30% melhores
 		//equevale a 60% dos invidiuos da população
-		int finalMelhores = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO*0.3) * 2;
+		int finalMelhores = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.3 * 2);
 		for(i = 0 ; i < finalMelhores ; ++i, ++j){
 			saida[j] = todos[i];
 		}
 		
 		//Pega os intermediários entre 40% e 55%
 		//equevale a 30% dos invidiuos da população
-		int inicioIntermediario = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO*0.40) * 2;
-		int finalIntermediario = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO*0.55) * 2;
+		int inicioIntermediario = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.40 * 2);
+		int finalIntermediario = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.55 * 2);
 		for(i = inicioIntermediario ; i < finalIntermediario ; ++i, ++j){
 			saida[j] = todos[i];
 		}
 		
 		//Pega os piores entre 85% e 90%
 		//equevale a 10% dos invidiuos da população
-		int inicioPiores = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO*0.85) * 2;
-		int finalPiores = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO*0.90) * 2;
+		int inicioPiores = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.85 * 2);
+		int finalPiores = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.90 * 2);
 		for(i = inicioPiores ; i < finalPiores ; ++i, ++j){
 			saida[j] = todos[i];
 		}
