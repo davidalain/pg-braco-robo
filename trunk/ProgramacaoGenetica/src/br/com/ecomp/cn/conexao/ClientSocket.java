@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.LinkedList;
 
-import br.com.ecomp.cn.pg.BracoRoboPG;
+import br.com.ecomp.cn.pg.AlgoritmoPG;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
 
 
@@ -28,7 +28,7 @@ public class ClientSocket {
 			try{
 				
 				instance = new ClientSocket();
-				Socket clienteSocket = new Socket(BracoRoboPG.IP_SERVIDOR, BracoRoboPG.PORTA_SERVIDOR);
+				Socket clienteSocket = new Socket(AlgoritmoPG.IP_SERVIDOR, AlgoritmoPG.PORTA_SERVIDOR);
 				
 				transmissaoServidor = new DataOutputStream(clienteSocket
 						.getOutputStream());
@@ -36,7 +36,7 @@ public class ClientSocket {
 				recepcaoServidor = new BufferedReader(
 						new InputStreamReader(clienteSocket.getInputStream()));
 				
-				System.out.println("Conectou a "+BracoRoboPG.IP_SERVIDOR+":"+BracoRoboPG.PORTA_SERVIDOR);
+				System.out.println("Conectou a "+AlgoritmoPG.IP_SERVIDOR+":"+AlgoritmoPG.PORTA_SERVIDOR);
 			}catch (Exception e) {
 				throw new Error(e.getMessage());
 			}

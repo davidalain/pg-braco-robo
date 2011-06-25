@@ -2,8 +2,8 @@ package br.com.ecomp.cn.pg.representacaoIndividuo;
 
 import java.util.LinkedList;
 
-import br.com.ecomp.cn.conexao.ClientSocket;
-import br.com.ecomp.cn.pg.BracoRoboPG;
+import br.com.ecomp.cn.pg.AlgoritmoPG;
+import br.com.ecomp.cn.simulador.Modelo3D;
 
 /**
  * @authors David Alain e Leandro Honorato 
@@ -25,39 +25,35 @@ public class Individuo {
 		fitness = new Fitness();
 	}
 
-	public Fitness avaliarIndividuo () //É o fitness
-	{
+	public Fitness fitness (){
 		
 		if(!avaliado){
 			
 			avaliado = true;
-//			for(Operacao op : listaOperacoes){
-//				int sucesso = ClientSocket.getInstance().executarOperacao(op);
-//				if(sucesso == 0){
-//					possuiOperacaoInvalida = true;
-//					//fitness[0] = Double.MAX_VALUE;
-//					System.out.println("Houve Operação Inválida");
-//				}
-//			}
+			fitness.distanciaFinal = 0.0d;
+			fitness.somaDistancias = 0.0d;
 			
-			int erro = ClientSocket.getInstance().executarOperacoes(listaOperacoes);
-			if(erro != -1){
-				possuiOperacaoInvalida = true;
+			Modelo3D.reset();
+			
+			for(Operacao op : listaOperacoes){
+				
+				int sucesso = Modelo3D.executarOperacao(op);
+				if(sucesso == 0){
+					possuiOperacaoInvalida = true;
+				}
+				
+				fitness.somaDistancias += Modelo3D.calculaDistancia();
 			}
 			
-			fitness.distancia = ClientSocket.getInstance().calcularDistancia();
-			fitness.quantidadeOperacoes = listaOperacoes.size();
-			System.out.println("d: "+fitness.distancia + ", op: "+fitness.quantidadeOperacoes);
+			fitness.distanciaFinal = Modelo3D.calculaDistancia();
 		}
-		
-		//System.out.println("fitness: dist = " + fitness[0]+", operacoes = "+fitness[1]);
 		
 		return fitness;
 	}
 	
 	public boolean isIndividuoValido () //Para depois tratar restrições
 	{
-		return ((!possuiOperacaoInvalida) && (listaOperacoes.size() <= BracoRoboPG.NUMERO_MAXIMO_OPERACOES));
+		return ((!possuiOperacaoInvalida) && (listaOperacoes.size() <= AlgoritmoPG.NUMERO_MAXIMO_OPERACOES));
 	}
 	
 //	public LinkedList<Operacao> getListaOperacoes() {
@@ -66,6 +62,7 @@ public class Individuo {
 	
 	public void adicionarOperacao(Operacao op){
 		listaOperacoes.add(op);
+		avaliado = false;
 	}
 	
 	public Operacao getOperacao(int indice){

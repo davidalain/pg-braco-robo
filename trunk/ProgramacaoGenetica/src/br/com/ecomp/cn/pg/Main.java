@@ -8,7 +8,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		BracoRoboPG br = new BracoRoboPG();
+		AlgoritmoPG br = new AlgoritmoPG();
 		Individuo solucao = br.buscarSolucao();
 
 		System.out.println("\nA melhor solução encontrada foi:\n\n");

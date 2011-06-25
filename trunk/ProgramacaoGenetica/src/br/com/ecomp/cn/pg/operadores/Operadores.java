@@ -1,6 +1,6 @@
 package br.com.ecomp.cn.pg.operadores;
 
-import br.com.ecomp.cn.pg.BracoRoboPG;
+import br.com.ecomp.cn.pg.AlgoritmoPG;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Fitness;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Individuo;
 import br.com.ecomp.cn.pg.representacaoIndividuo.Operacao;
@@ -20,7 +20,7 @@ public class Operadores {
 		
 		int menorIndice = tamanhoIndividuo1 < tamanhoIndividuo2 ? tamanhoIndividuo1 : tamanhoIndividuo2;
 		
-		int indice = BracoRoboPG.arredonda(Math.random() * (menorIndice - 1)) + 1;
+		int indice = AlgoritmoPG.arredonda(Math.random() * (menorIndice - 1)) + 1;
 		
 		for(int i = 0 ; i < indice ; ++i){
 			novo1.adicionarOperacao(individuo1.getOperacao(i));
@@ -41,8 +41,8 @@ public class Operadores {
 //		Individuo individuoMutado = individuo.clone();
 		int indiceMaximo = individuoMutado.quantidadeOperacoes() - 1;
 		
-		int posicaoMutacao1 = BracoRoboPG.arredonda(Math.random() * indiceMaximo);
-		int posicaoMutacao2 = BracoRoboPG.arredonda(Math.random() * indiceMaximo);
+		int posicaoMutacao1 = AlgoritmoPG.arredonda(Math.random() * indiceMaximo);
+		int posicaoMutacao2 = AlgoritmoPG.arredonda(Math.random() * indiceMaximo);
 		
 		Operacao op1 = individuoMutado.getOperacao(posicaoMutacao1);
 		Operacao op2 = individuoMutado.getOperacao(posicaoMutacao2);
@@ -58,41 +58,40 @@ public class Operadores {
 			Individuo[] populacaoIntermediaria) {
 		
 		Individuo[] todos = new Individuo[populacao.length + populacaoIntermediaria.length];
-		Individuo[] saida = new Individuo[BracoRoboPG.TAMANHO_POPULACAO];
+		Individuo[] saida = new Individuo[AlgoritmoPG.TAMANHO_POPULACAO];
 		
-		boolean primeiraLista = true;
-		for(int i = 0 , j = 0 ; i < todos.length ; ++i, ++j){
+		int i = 0, j = 0;
 		
-			if(primeiraLista){
-				todos[i] = populacao[j];
-			}else{
-				todos[i] = populacaoIntermediaria[j];
-			}
-			
-			if(++j == populacao.length ){
-				j = 0;
-				primeiraLista = false;
-			}
+		for(j = 0 ; j < populacao.length ; ++i, ++j){
+			todos[i] = populacao[j];
+		}
+		for(j = 0 ; j < populacaoIntermediaria.length ; ++i, ++j){
+			todos[i] = populacaoIntermediaria[j];
 		}
 		
 		todos = ordenaPeloFitness(todos);
 		
-		int j = 0;
 		
-		int finalMelhores = BracoRoboPG.arredonda(BracoRoboPG.TAMANHO_POPULACAO*0.3) * 2;
-		for(int i = 0 ; i < finalMelhores ; ++i, ++j){
+		//Pega os 30% melhores
+		//equevale a 60% dos invidiuos da população
+		int finalMelhores = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO*0.3) * 2;
+		for(i = 0 ; i < finalMelhores ; ++i, ++j){
 			saida[j] = todos[i];
 		}
 		
-		int inicioIntermediario = BracoRoboPG.arredonda(BracoRoboPG.TAMANHO_POPULACAO*0.40) * 2;
-		int finalIntermediario = BracoRoboPG.arredonda(BracoRoboPG.TAMANHO_POPULACAO*0.55) * 2;
-		for(int i = inicioIntermediario ; i < finalIntermediario ; ++i, ++j){
+		//Pega os intermediários entre 40% e 55%
+		//equevale a 30% dos invidiuos da população
+		int inicioIntermediario = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO*0.40) * 2;
+		int finalIntermediario = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO*0.55) * 2;
+		for(i = inicioIntermediario ; i < finalIntermediario ; ++i, ++j){
 			saida[j] = todos[i];
 		}
 		
-		int inicioPiores = BracoRoboPG.arredonda(BracoRoboPG.TAMANHO_POPULACAO*0.85) * 2;
-		int finalPiores = BracoRoboPG.arredonda(BracoRoboPG.TAMANHO_POPULACAO*0.90) * 2;
-		for(int i = inicioPiores ; i < finalPiores ; ++i, ++j){
+		//Pega os piores entre 85% e 90%
+		//equevale a 10% dos invidiuos da população
+		int inicioPiores = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO*0.85) * 2;
+		int finalPiores = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO*0.90) * 2;
+		for(i = inicioPiores ; i < finalPiores ; ++i, ++j){
 			saida[j] = todos[i];
 		}
 		
@@ -131,21 +130,21 @@ public class Operadores {
 	
 	public static boolean temFitnessMelhor( Individuo melhorIndividuo, Individuo atual ) {
 		
-		Fitness fitnessMelhor = melhorIndividuo.avaliarIndividuo();
-		Fitness fitnessAtual = atual.avaliarIndividuo();
+		Fitness fitnessMelhor = melhorIndividuo.fitness();
+		Fitness fitnessAtual = atual.fitness();
 		
 		boolean menorIgual = false;
 		boolean menor = false;
 		
-		if(	((fitnessAtual.distancia < fitnessMelhor.distancia) ||
-			(Math.abs(fitnessAtual.distancia - fitnessMelhor.distancia) <= BracoRoboPG.PRECISAO_DISTANCIA)) &&
-			(fitnessAtual.quantidadeOperacoes <= fitnessMelhor.quantidadeOperacoes))
+		if(	((fitnessAtual.distanciaFinal < fitnessMelhor.distanciaFinal) ||
+			(Math.abs(fitnessAtual.distanciaFinal - fitnessMelhor.distanciaFinal) <= AlgoritmoPG.PRECISAO_DISTANCIA)) &&
+			(fitnessAtual.somaDistancias <= fitnessMelhor.somaDistancias))
 		{
 			menorIgual = true;
 		}
 		
-		if(	(fitnessAtual.distancia < fitnessMelhor.distancia) ||
-			(fitnessAtual.quantidadeOperacoes < fitnessMelhor.quantidadeOperacoes))
+		if(	(fitnessAtual.distanciaFinal < fitnessMelhor.distanciaFinal) ||
+			(fitnessAtual.somaDistancias < fitnessMelhor.somaDistancias))
 		{
 			menor = true;
 		}
