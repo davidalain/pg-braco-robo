@@ -11,13 +11,13 @@ public class Main {
 		AlgoritmoPG br = new AlgoritmoPG();
 		Individuo solucao = br.buscarSolucao();
 
-		System.out.println("\nA melhor solução encontrada foi:\n\n");
+		System.out.println("\nO código pra executar a melhor solução é:\n\n");
 		System.out.println("LinkedList<Operacao> operacoes = new LinkedList<Operacao>();");
 		for(int i = 0 ; i < solucao.quantidadeOperacoes() ; ++i){
 			Operacao op = solucao.getOperacao(i);
-			System.out.println("operacoes.add(new Operacao("+op.getEixo()+", "+op.getAngulo()+"));");
+			System.out.println("Modelo3D.executarOperacao(new Operacao("+op.getEixo()+", "+op.getAngulo()+"));");
 		}
-		System.out.println("ClientSocket.getInstance().executarOperacoes(operacoes);");
+		
 		
 	}
 	
