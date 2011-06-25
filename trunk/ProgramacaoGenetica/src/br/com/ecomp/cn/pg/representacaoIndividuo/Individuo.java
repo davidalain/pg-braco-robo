@@ -24,6 +24,13 @@ public class Individuo {
 		listaOperacoes = new LinkedList<Operacao>();
 		fitness = new Fitness();
 	}
+	
+	public Individuo(LinkedList<Operacao> operacoes) {
+		avaliado = false;
+		possuiOperacaoInvalida = false;
+		listaOperacoes = operacoes;
+		fitness = new Fitness();
+	}
 
 	public Fitness fitness (){
 		
