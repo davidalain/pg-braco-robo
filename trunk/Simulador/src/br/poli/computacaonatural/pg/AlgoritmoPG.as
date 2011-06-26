@@ -48,7 +48,22 @@ package br.poli.computacaonatural.pg
 			}
 		}
 		
+		
+		
 		private function gerarIndividuo():Individuo {
+					
+					var novo:Individuo = new Individuo();
+					var quantidadeOperacoes:int = AlgoritmoPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - 10)) + 6;
+					
+					for(var i:int = 0 ; i < quantidadeOperacoes ; ++i){
+						novo.adicionarOperacao(this.gerarOperacao());
+					}
+					
+					return novo;
+				}
+		
+		
+		private function gerarIndividuo2():Individuo {
 			
 			var novo:Array = new Array();
 			var quantidadeOperacoes:int = AlgoritmoPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - NUMERO_MINIMO_OPERACOES)) + NUMERO_MINIMO_OPERACOES;
