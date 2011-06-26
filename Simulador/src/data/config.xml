@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<data>
+	<config>
+		<pivots>
+			<pivot id="arm" initAng="20" minLimitAng="0" maxLimitAng="90" />
+			<pivot id="subarm" initAng="50" minLimitAng="0" maxLimitAng="120" />
+			<pivot id="base" initAng="0" minLimitAng="-190" maxLimitAng="0" />
+		</pivots>
+		<objects>
+			<object id="1" x="300" y="0" z="0" />
+			<!--<object x="-300" y="0" z="300" />
+			<object x="300" y="0" z="100" />-->
+		</objects>
+	</config>
+</data>
+
+
