@@ -133,8 +133,8 @@ package {
 			
 			var solucao:Individuo = algPG.buscarSolucao();
 			
-			trace("\nO código pra executar a melhor solução é:\n\n");
-			trace("---------------------");
+			//trace("\nO código pra executar a melhor solução é:\n\n");
+			//trace("---------------------");
 			var RESPOSTA:String= "";
 			for(var i:int = 0 ; i < solucao.quantidadeOperacoes() ; ++i){
 				var op:Operacao = solucao.getOperacao(i);
