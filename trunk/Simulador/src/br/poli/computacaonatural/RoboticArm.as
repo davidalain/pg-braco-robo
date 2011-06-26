@@ -23,10 +23,13 @@ package br.poli.computacaonatural {
 	import away3d.primitives.Plane;
 	import away3d.primitives.Sphere;
 	import away3d.primitives.Torus;
+	
+	import br.poli.computacaonatural.events.RoboticArmEvent;
 	import br.poli.computacaonatural.model3d.ArmModel;
 	import br.poli.computacaonatural.model3d.ElementModel;
 	import br.poli.computacaonatural.model3d.SubArm;
-	import br.poli.computacaonatural.events.RoboticArmEvent;
+	
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -119,6 +122,10 @@ package br.poli.computacaonatural {
 			this.camera.panAngle = 45;
 			this.camera.tiltAngle = 20;
 			this.camera.hover(true);
+			
+			
+			//var a:* =this.camera.viewProjection
+			
 						
 			//fogfilter = new FogFilter({material:new ColorMaterial(0x000000), minZ:500, maxZ:2000});
 			this.fogfilter = new FogFilter();
@@ -136,6 +143,7 @@ package br.poli.computacaonatural {
 			
 			//this.view.addSourceURL("srcview/index.html");
 			this.addChild(view);
+			
 		
 		}
 		
@@ -203,14 +211,18 @@ package br.poli.computacaonatural {
 					
 		}
 		
-		public function reset ():void {			
-			this.armModel.primAxis.rotationX = 0;
-			this.armModel.interAxis.rotationX = 0;
-			if (this.draggedItem != null) {
-				this.armModel.interAxis.removeChild (this.draggedItem);
+		public function reset ():void {		
+			if(this.armModel){
+				this.armModel.primAxis.rotationX = 0;
+				this.armModel.interAxis.rotationX = 0;
+				this.armModel.rotationY = 0;
+				if (this.draggedItem != null) {
+					this.armModel.interAxis.removeChild (this.draggedItem);
+				}
+				this.draggedItem = null;
+				this.addObject ();
 			}
-			this.draggedItem = null;
-			this.addObject ();
+			
 		}
 		
 		private function addObject ():void {
@@ -232,6 +244,7 @@ package br.poli.computacaonatural {
 		
 		private function onLoadCollada(e:Loader3DEvent):void {
 			
+			//new BitmapMaterial(new BitmapData(50,50),null );//
 			var shadeMaterial:BitmapMaterial = new BitmapMaterial(Cast.bitmap(Shade));
 			
 			this.bracoConteiner = this.braco.handle as ObjectContainer3D;
@@ -251,14 +264,20 @@ package br.poli.computacaonatural {
 			this.pJuncao2.rotationX = Number (this.xmlConfig.config.pivots.pivot.(@id == "juncao2").@initAng);
 		}		
 		
-		public function distances ():Vector.<Number> {
-			var dists:Vector.<Number> = new Vector.<Number>();
-			
-			this.reference = this.armModel.reference;
-			
-			for (var i:int = 0; i < this.objects.length; i++) {
-				var item:ElementModel = this.objects[i];
-				dists.push ( this.reference.distanceTo (item) - 75);				
+		public function distances():Number {
+//		public function distances ():Vector.<Number> {
+			var dists:Number;
+//			var dists:Vector.<Number> = new Vector.<Number>();
+			//this.view.render();
+			if( this.armModel ){
+				this.reference = this.armModel.reference;
+				
+				//for (var i:int = 0; i < this.objects.length; i++) {
+					var item:ElementModel = this.objects[0];
+					dists = this.reference.distanceTo (item);
+			//		dists.push ( this.reference.distanceTo (item) );				
+//					dists.push ( this.reference.distanceTo (item) - 75);				
+				//}
 			}
 						
 			return dists;
@@ -269,10 +288,10 @@ package br.poli.computacaonatural {
 			return Math.PI / 180 * degree;
 		}
 		
-		public function rotateBase (ang:Number):void {
+		public function rotateBase (ang:Number):int {
 			//this.pGeral.rotationY += ang;
 			//trace ("this.reference", this.reference.position);
-			
+			var isValid:int = 0;
 			if (isNaN (ang)) ang = 0;
 			
 			this.armModel.rotationY += ang;
@@ -283,18 +302,24 @@ package br.poli.computacaonatural {
 			var event:RoboticArmEvent;
 			if (this.armModel.rotationY > max) {
 				this.armModel.rotationY = max;
+				isValid = 0;
 				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
 			} else {
+				isValid = 1;
 				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
 			if (this.armModel.rotationY < min) {
 				this.armModel.rotationY = min;
+				isValid = 0;
 				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
 			} else {
+				isValid= 1;
 				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
 			this.dispatchEvent (event);
 			
+		//	this.view.render();
+			return isValid;
 			// TODO Pegar Caixa
 			/*if (this.distances ()[0] < 40 || this.pegou) {
 				this.pegou = true;
@@ -304,16 +329,17 @@ package br.poli.computacaonatural {
 			}
 			*/
 			
-			this.testCollision ();
+			//this.testCollision ();
 			
 		}
 		
 		private function testCollision():void {		
 			
-			var dists:Vector.<Number> = this.distances ();
+			var dists:Number = this.distances ();
+//			var dists:Vector.<Number> = this.distances ();
 			
-			var event:RoboticArmEvent = new RoboticArmEvent (RoboticArmEvent .END_ROTATE, dists);
-			this.dispatchEvent ( event );
+		//	var event:RoboticArmEvent = new RoboticArmEvent (RoboticArmEvent .END_ROTATE, dists);
+		//	this.dispatchEvent ( event );
 			
 			//this.draggedItem = null;
 			
@@ -322,19 +348,19 @@ package br.poli.computacaonatural {
 				var dist:Number = this.reference.distanceTo (item) - 75;
 				
 				if (dist <= 0.01) {
-					event = new RoboticArmEvent (RoboticArmEvent.COLLISION , dists, item);
-					this.dispatchEvent ( event );	
+			//		event = new RoboticArmEvent (RoboticArmEvent.COLLISION , dists, item);
+			//		this.dispatchEvent ( event );	
 					
 					if (this.draggedItem == null) {
 						this.draggedItem = item;
 						trace (this.draggedItem);
 					}
 					
-					item.x = this.reference.x;
-					item.y = this.reference.y;
-					item.z = this.reference.z;
+			//		item.x = this.reference.x;
+			//		item.y = this.reference.y;
+			//		item.z = this.reference.z;
 					
-					this.armModel.interAxis.addChild (item);
+			//		this.armModel.interAxis.addChild (item);
 				}
 				
 				
@@ -362,12 +388,12 @@ package br.poli.computacaonatural {
 			
 		}
 		
-		public function rotateArm (ang:Number):void {
+		public function rotateArm (ang:Number):int {
 			
 			if (isNaN (ang)) ang = 0;
 			
 			this.armModel.primAxis.rotationX += ang;
-			
+			var isValid:int = 0;
 			/*this.pGeral.rotationX += ang;
 			*/
 			var max:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "arm").@maxLimitAng);
@@ -378,25 +404,29 @@ package br.poli.computacaonatural {
 				this.armModel.primAxis.rotationX = max;
 				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
 			} else {
+				isValid =1 
 				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}			
 			if (this.armModel.primAxis.rotationX < min) {
 				this.armModel.primAxis.rotationX = min;
 				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
 			} else {
+				
+				isValid = 1;
 				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
 			this.dispatchEvent (event);
-						
-			this.testCollision ();
+			//this.view.render();
+			return  isValid ;			
+			//this.testCollision ();
 		}
 		
-		public function rotateSubArm (ang:Number):void {
+		public function rotateSubArm (ang:Number):int {
 			
 			if (isNaN (ang)) ang = 0;
 			
 			this.armModel.interAxis.rotationX += ang;
-			
+			var isValid:int = 0;
 			var max:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "subarm").@maxLimitAng);
 			var min:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "subarm").@minLimitAng);
 			
@@ -415,8 +445,9 @@ package br.poli.computacaonatural {
 				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
 			this.dispatchEvent (event);
-			
-			this.testCollision ();
+		//	this.view.render();
+			return isValid;
+			//this.testCollision ();
 		}
 		
 		public function rotateJuncao1 (ang:Number):void {
