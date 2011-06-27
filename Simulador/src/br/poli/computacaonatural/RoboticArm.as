@@ -299,24 +299,24 @@ package br.poli.computacaonatural {
 			var max:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "base").@maxLimitAng);
 			var min:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "base").@minLimitAng);
 			
-			var event:RoboticArmEvent;
+		//	var event:RoboticArmEvent;
 			if (this.armModel.rotationY > max) {
-				this.armModel.rotationY = max;
+				this.armModel.rotationY -= ang;
 				isValid = 0;
-				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+			//	event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
 			} else {
 				isValid = 1;
-				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
+			//	event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
 			if (this.armModel.rotationY < min) {
-				this.armModel.rotationY = min;
+				this.armModel.rotationY -= ang;
 				isValid = 0;
-				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+			//	event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
 			} else {
 				isValid= 1;
-				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
+			//	event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
-			this.dispatchEvent (event);
+			//this.dispatchEvent (event);
 			
 		//	this.view.render();
 			return isValid;
@@ -399,23 +399,23 @@ package br.poli.computacaonatural {
 			var max:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "arm").@maxLimitAng);
 			var min:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "arm").@minLimitAng);
 			
-			var event:RoboticArmEvent;
+		//	var event:RoboticArmEvent;
 			if (this.armModel.primAxis.rotationX > max) {
-				this.armModel.primAxis.rotationX = max;
-				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+				this.armModel.primAxis.rotationX -= ang;
+		//		event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
 			} else {
 				isValid =1 
-				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
+		//		event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}			
 			if (this.armModel.primAxis.rotationX < min) {
-				this.armModel.primAxis.rotationX = min;
-				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+				this.armModel.primAxis.rotationX -= ang;
+		//		event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
 			} else {
 				
 				isValid = 1;
-				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
+		//		event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
-			this.dispatchEvent (event);
+			//.dispatchEvent (event);
 			//this.view.render();
 			return  isValid ;			
 			//this.testCollision ();
@@ -431,20 +431,23 @@ package br.poli.computacaonatural {
 			var min:Number = Number (this.xmlConfig.config.pivots.pivot.(@id == "subarm").@minLimitAng);
 			
 			
-			var event:RoboticArmEvent;
+		//	var event:RoboticArmEvent;
 			if (this.armModel.interAxis.rotationX > max) {
-				this.armModel.interAxis.rotationX = max;
-				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+				this.armModel.interAxis.rotationX -= ang;
+				//event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
 			} else {
-				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
+				isValid =1
+			//	event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}			
 			if (this.armModel.interAxis.rotationX < min) {
-				this.armModel.interAxis.rotationX = min;
-				event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
+				this.armModel.interAxis.rotationX -= ang;
+				isValid =0 
+			//	event = new RoboticArmEvent (RoboticArmEvent.INVALID_ROTATION);
 			} else {
-				event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
+				isValid =1
+			//	event = new RoboticArmEvent (RoboticArmEvent.VALID_ROTATION);
 			}
-			this.dispatchEvent (event);
+			//this.dispatchEvent (event);
 		//	this.view.render();
 			return isValid;
 			//this.testCollision ();

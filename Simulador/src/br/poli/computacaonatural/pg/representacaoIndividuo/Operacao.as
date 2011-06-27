@@ -26,6 +26,10 @@ package br.poli.computacaonatural.pg.representacaoIndividuo
 		public function setAngulo( valor:int):void {
 			this.angulo = valor;
 		}
+		
+		public function toString():String{
+			return this.eixo+" # "+this.angulo;
+		}
 	}
 }
 

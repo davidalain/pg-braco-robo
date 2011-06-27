@@ -64,14 +64,46 @@ package br.poli.computacaonatural.pg.operadores
 					var i:int = 0
 					var j:int = 0;
 					
-					for(j = 0 ; j < populacao.length ; ++i, ++j){
+					for(j = 0 ; j < populacao.length ; i++, j++){
 						todos[i] = populacao[j];
 					}
-					for(j = 0 ; j < populacaoIntermediaria.length ; ++i, ++j){
+					for(j = 0 ; j < populacaoIntermediaria.length ; i++, j++){
 						todos[i] = populacaoIntermediaria[j];
 					}
 					
-					todos = ordenaPeloFitness.apply(null,todos);
+					//todos = ordenaPeloFitness.apply(null,todos);
+					todos = ordenaPeloFitness(todos);
+					
+					j = 0;
+					i = 0;
+					
+					//Pega os 30% melhores
+					//equevale a 60% dos invidiuos da população
+					var finalMelhores:int = AlgoritmoPG.TAMANHO_POPULACAO;
+					for(i = 0 ; i < finalMelhores ; i++, j++){
+						saida[j] = todos[i];
+					}
+					 
+					return saida;
+				}
+			public static function selecao2(  populacao:Array,
+				 							 populacaoIntermediaria:Array):Array {
+					
+					var todos:Array = new Array();//new Individuo[populacao.length + populacaoIntermediaria.length];
+					var saida:Array = new Array();//new Individuo[AlgoritmoPG.TAMANHO_POPULACAO];
+					
+					var i:int = 0
+					var j:int = 0;
+					
+					for(j = 0 ; j < populacao.length ; i++, j++){
+						todos[i] = populacao[j];
+					}
+					for(j = 0 ; j < populacaoIntermediaria.length ; i++, j++){
+						todos[i] = populacaoIntermediaria[j];
+					}
+					
+					//todos = ordenaPeloFitness.apply(null,todos);
+					todos = ordenaPeloFitness(todos);
 					
 					j = 0;
 					i = 0;
@@ -79,7 +111,7 @@ package br.poli.computacaonatural.pg.operadores
 					//Pega os 30% melhores
 					//equevale a 60% dos invidiuos da população
 					var finalMelhores:int = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.3 * 2);
-					for(i = 0 ; i < finalMelhores ; ++i, ++j){
+					for(i = 0 ; i < finalMelhores ; i++, j++){
 						saida[j] = todos[i];
 					}
 					
@@ -87,32 +119,40 @@ package br.poli.computacaonatural.pg.operadores
 					//equevale a 30% dos invidiuos da população
 					var inicioIntermediario:int = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.40 * 2);
 					var finalIntermediario:int = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.55 * 2);
-					for(i = inicioIntermediario ; i < finalIntermediario ; ++i, ++j){
+					for(i = inicioIntermediario ; i < finalIntermediario ; i++, j++){
 						saida[j] = todos[i];
 					}
 					
 					//Pega os piores entre 85% e 90%
 					//equevale a 10% dos invidiuos da população
 					var inicioPiores:int = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.85 * 2);
-					var finalPiore:int = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.90 * 2);
-					for(var i:int = inicioPiores ; i < finalPiore ; ++i, ++j){
+					var finalPiores:int = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.90 * 2);
+					
+					for(var i:int = inicioPiores ; i < finalPiores ; i++, j++){
 						saida[j] = todos[i];
 					}
 					
+					if(j < AlgoritmoPG.TAMANHO_POPULACAO){
+						saida[j] = todos[i];
+					}
+					
+					if(saida.length != AlgoritmoPG.TAMANHO_POPULACAO){
+						throw( new Error("saida < tamanho da populacao") );
+					}
 					return saida;
 				}
 			
-			public static function ordenaPeloFitness(... individuos  ):Array {
+			public static function ordenaPeloFitness( individuos:Array  ):Array {
 				
 				//Algoritmo Selection Sort
 				var indiceMelhor:int;
 				
-				for(var i:int = 0 ; i < individuos.length ; ++i){
+				for(var i:int = 0 ; i < individuos.length ; i++){
 					
 					indiceMelhor = i;
-					var melhorIndividuo:Individuo = individuos[i] as Individuo;
+					var melhorIndividuo:Individuo = Individuo(individuos[i]);
 					
-					for(var j:int = i + 1; j < individuos.length ; ++j){
+					for(var j:int = i + 1; j < individuos.length ; j++){
 						
 						var atual:Individuo = individuos[j];
 						
