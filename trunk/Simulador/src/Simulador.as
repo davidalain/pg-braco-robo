@@ -139,14 +139,14 @@ package {
 			for(var i:int = 0 ; i < solucao.quantidadeOperacoes() ; ++i){
 				var op:Operacao = solucao.getOperacao(i);
 				 
-				RESPOSTA += ("this.tasks.push (new Task ("+op.getEixo()+", "+op.getAngulo()+" ) );");
+				RESPOSTA += ("this.tasks.push (new Task ("+op.getEixo()+", "+op.getAngulo()+" ) );\n");
 				 
 			}
 			MonsterDebugger.trace(this, RESPOSTA);
 			
 			},1000);
 				
-				 
+			
 			
 			
 			
