@@ -11,20 +11,28 @@ package br.poli.computacaonatural.pg
 
 	public class AlgoritmoPG
 	{
-		public static const  NUMERO_MAXIMO_OPERACOES:int = 30;
+		public static const  OPERACOES_MAX:int = 10;
 		
-		public static const  NUMERO_MINIMO_OPERACOES:int = 10;
-		public static const  TAMANHO_POPULACAO:int = 30;
-		public static const  NUMERO_MAXIMO_GERACOES:int = 30;
-		public static const  ANGULO_MAXIMO_INICIAL:int = 10;
-		public static const  GRAUS_DE_LIBERDADE:int = 3;
+		public static const  OPERACOES_MIN:int = 10;
+		
+		public static const  TAMANHO_POPULACAO:int = 40;
+		
+		public static const  GERACOES_MAX:int = 30;
+		
+		//public static const  ANGULO_MAXIMO_INICIAL:int = 60;KD?
+		public static const  ANGULO_MAXIMO_INICIAL:Array = [0,0,0];
+		public static const  ANGULO_MAXIMO_FINAL:Array = [-190,90,120];
+		
+		public static const  GRAUS_DE_LIBERDADE:int = ANGULO_MAXIMO_INICIAL.length;
 		
 		public static const  TAXA_RECOMBINACAO:Number = 0.95;
-		public static const  PRECISAO_DISTANCIA:Number = 0.1;
+		
+		public static const  PRECISAO_DISTANCIA:Number = 50;
+		
 		public static const  ERRO_ENTRE_DISTANCIAS:Number = 0.1;
 		
-		public static const  IP_SERVIDOR:String = "192.168.0.129";
-		public static const  PORTA_SERVIDOR:int = 6667;
+		//public static const  IP_SERVIDOR:String = "192.168.0.129";
+		//public static const  PORTA_SERVIDOR:int = 6667;
 		
 		private var populacao:Array;
 		private var populacaoIntermediaria:Array;
@@ -34,16 +42,17 @@ package br.poli.computacaonatural.pg
 			
 		}
 		public static function arredonda( valor:Number):int{
-			var val:int = Math.round(valor)
-			return (val<0)?0:val;
+			var val:int = Math.round(valor);
+//			return (val<0)?0:val;
+			return val;
 		}
 		
 		
 		private function inicializaPopulacao():void{
-			populacao = new Array;
-			populacaoIntermediaria = new Array;
+			populacao = new Array();
+			populacaoIntermediaria = new Array();
 			
-			for(var i:int = 0 ; i < TAMANHO_POPULACAO ; ++i){
+			for(var i:int = 0 ; i < TAMANHO_POPULACAO ; i++){
 				populacao[i] = this.gerarIndividuo();
 			}
 		}
@@ -53,7 +62,7 @@ package br.poli.computacaonatural.pg
 		private function gerarIndividuo():Individuo {
 					
 					var novo:Individuo = new Individuo();
-					var quantidadeOperacoes:int = AlgoritmoPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - 10)) + 6;
+					var quantidadeOperacoes:int = OPERACOES_MAX;// AlgoritmoPG.arredonda(Math.random() * (OPERACOES_MAX - 10)) + 6;
 					
 					for(var i:int = 0 ; i < quantidadeOperacoes ; ++i){
 						novo.adicionarOperacao(this.gerarOperacao());
@@ -66,7 +75,7 @@ package br.poli.computacaonatural.pg
 		private function gerarIndividuo2():Individuo {
 			
 			var novo:Array = new Array();
-			var quantidadeOperacoes:int = AlgoritmoPG.arredonda(Math.random() * (NUMERO_MAXIMO_OPERACOES - NUMERO_MINIMO_OPERACOES)) + NUMERO_MINIMO_OPERACOES;
+			var quantidadeOperacoes:int = AlgoritmoPG.arredonda(Math.random() * (OPERACOES_MAX - OPERACOES_MIN)) + OPERACOES_MIN;
 			
 			for(var i:int = 0 ; i < GRAUS_DE_LIBERDADE ; ++i){
 				novo.push( new Individuo() );
@@ -96,7 +105,7 @@ package br.poli.computacaonatural.pg
 		}
 		
 		private function avaliaPopulacao():void {
-			for(var i:int = 0 ; i < this.populacao.length ; ++i){
+			for(var i:int = 0 ; i < this.populacao.length ; i++){
 				this.populacao[i].fitness;
 			}
 		}
@@ -104,23 +113,30 @@ package br.poli.computacaonatural.pg
 		
 		private function atingiuCondicaoParada():Boolean {
 			var fitnessMelhor:Fitness = this.populacao[0].fitness;
-			return((fitnessMelhor.distanciaFinal <= AlgoritmoPG.PRECISAO_DISTANCIA) || (this.geracaoAtual >= AlgoritmoPG.NUMERO_MAXIMO_GERACOES));
+			return((fitnessMelhor.distanciaFinal <= AlgoritmoPG.PRECISAO_DISTANCIA) && (this.geracaoAtual >= AlgoritmoPG.GERACOES_MAX));
 		}
 		
 		
 		public function gerarOperacao(vert:int = -1):Operacao {
 			var vertebra:int;
-			if(vert!=-1){ 
+			if(vert==-1){ 
 				vertebra =  AlgoritmoPG.arredonda(Math.random() * (GRAUS_DE_LIBERDADE - 1)); 
 			}else{
 				vertebra =  vert; 
 			}
-			var angulo:int = AlgoritmoPG.arredonda(Math.random() * (ANGULO_MAXIMO_INICIAL + ANGULO_MAXIMO_INICIAL)) - ANGULO_MAXIMO_INICIAL;
+			//var angulo:int = AlgoritmoPG.arredonda(Math.random() * (ANGULO_MAXIMO_INICIAL + ANGULO_MAXIMO_INICIAL)) - ANGULO_MAXIMO_INICIAL;
+			
+			
+			var ang:int = this.randRange(ANGULO_MAXIMO_INICIAL[vertebra],ANGULO_MAXIMO_FINAL[vertebra]);
+			var angulo:int = (Math.random()*10 )%2==1? -1*ang : ang ;
 			return new Operacao(vertebra, angulo);
 		}
 		 
 		
-		
+		private function randRange(minNum:Number, maxNum:Number):Number 
+		{
+			return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
+		}
 		
 		public function buscarSolucao():Individuo{
 			MonsterDebugger.trace(this, "buscarSolucao" );
@@ -128,13 +144,13 @@ package br.poli.computacaonatural.pg
 			
 			//inicializar População
 			this.inicializaPopulacao();
-			trace("Inicializou a população");
+			//trace("Inicializou a população");
 			
 			MonsterDebugger.trace(this, "Inicializou a população" );
 			
 			//calcular Fitness da População
 			this.avaliaPopulacao();
-			trace("avaliou a população");
+			//trace("avaliou a população");
 			MonsterDebugger.trace(this, "Avaliou a população" );
 			
 			while ( !this.atingiuCondicaoParada() ) // enquanto não atingir uma condição de parada
@@ -154,13 +170,13 @@ package br.poli.computacaonatural.pg
 					
 					if((condicaoMutacaoRecombinacao >= TAXA_RECOMBINACAO) || (indiceInter == TAMANHO_POPULACAO - 1)){
 						//Aplica mutação
-						
+					//	MonsterDebugger.trace( this, "mutação")
 						this.populacaoIntermediaria[indiceInter] = Operadores.mutacao(this.populacao[indiceRamdom1]);
 						indiceInter++;
 						
 					}else{
 						//Aplica recombinação
-						
+					//	MonsterDebugger.trace( this, "recombinação")
 						var novos:Array = Operadores.recombinacao(this.populacao[indiceRamdom1], this.populacao[indiceRamdom2]);
 						this.populacaoIntermediaria[indiceInter] = novos[0];
 						this.populacaoIntermediaria[indiceInter + 1] = novos[1];
@@ -170,16 +186,19 @@ package br.poli.computacaonatural.pg
 				}
 				
 				this.populacao = Operadores.selecao(this.populacao,this.populacaoIntermediaria);
+			//	this.populacao = this.populacaoIntermediaria;
 				
 				//trace("Geração atual: "+geracaoAtual);
 				
 				MonsterDebugger.trace(this, "Geração atual: "+geracaoAtual );
 				this.geracaoAtual++;
 				var fitness:Fitness = this.populacao[0].fitness;
-				//trace("Melhor: distancia = "+fitness.distanciaFinal+", operações = "+fitness.somaDistancias);
+				MonsterDebugger.trace( this,this.populacao[0] )
+				MonsterDebugger.trace(this,"Melhor: distancia = "+fitness.distanciaFinal+", operações = "+fitness.somaDistancias);
 			}
 			
-			return this.posProcessamento(this.populacao[0]);
+//			return this.posProcessamento(this.populacao[0]);
+			return  (this.populacao[0]);
 		}
 		
 		

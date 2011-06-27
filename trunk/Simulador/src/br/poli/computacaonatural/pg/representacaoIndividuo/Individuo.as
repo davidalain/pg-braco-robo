@@ -27,6 +27,16 @@ package br.poli.computacaonatural.pg.representacaoIndividuo
 		}
 		
 		
+		 
+		
+		public function get lista():Array {
+			var arr:Array = new Array()
+			for (var i:int = 0; i < this.listaOperacoes.length; i++) {
+				arr.push( this.listaOperacoes[i].toString() );
+			}
+			return arr;
+		}
+		
 		public function get fitness():Fitness{
 			
 			if(!this.avaliado){
@@ -37,18 +47,29 @@ package br.poli.computacaonatural.pg.representacaoIndividuo
 				
 				Modelo3D.reset();
 				
-				for each (var op:Operacao in this.listaOperacoes) { 
+				for (var i:int = 0 ; i < this.listaOperacoes.length ; i++) { 
 					
+					var op:Operacao = this.listaOperacoes[i];
 					var sucesso:int = Modelo3D.executarOperacao(op);
 					if(sucesso == 0){
 						possuiOperacaoInvalida = true;
+						
+						op.setAngulo(-Math.round(op.getAngulo()/2));
+						//this.avaliado = false;
+						//break;
+						i--
 					}
-					
+					else
 					_fitness.somaDistancias += Modelo3D.calculaDistancia();
 				}
  
-
-				
+/*
+				if(possuiOperacaoInvalida){
+					_fitness.distanciaFinal = Number.MAX_VALUE;
+				}else{
+					
+				}
+				*/
 				_fitness.distanciaFinal = Modelo3D.calculaDistancia();
 			}
 			
@@ -60,7 +81,7 @@ package br.poli.computacaonatural.pg.representacaoIndividuo
 		
 		public function isIndividuoValido ():Boolean //Para depois tratar restrições
 		{
-			return ((!this.possuiOperacaoInvalida) && (this.listaOperacoes.length <= AlgoritmoPG.NUMERO_MAXIMO_OPERACOES));
+			return ((!this.possuiOperacaoInvalida) && (this.listaOperacoes.length <= AlgoritmoPG.OPERACOES_MAX));
 		}
 		
 		
