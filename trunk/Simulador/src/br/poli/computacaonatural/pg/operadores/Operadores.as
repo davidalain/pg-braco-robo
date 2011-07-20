@@ -21,25 +21,26 @@ package br.poli.computacaonatural.pg.operadores
 				
 				var indice:int = AlgoritmoPG.arredonda(Math.random() * (tamanhoMenor - 1));
 				
-				for(var i:int = 0 ; i < indice ; ++i){
+				var i:int;
+				for(i = 0 ; i < indice ; i++){
 					novo1.adicionarOperacao(individuo1.getOperacao(i));
 					novo2.adicionarOperacao(individuo2.getOperacao(i));
 				}
-				for(var i:int = indice ; i < tamanhoIndividuo1 ; ++i){
+				for(i = indice ; i < tamanhoIndividuo1 ; i++){
 					novo2.adicionarOperacao(individuo1.getOperacao(i));
 				}
-				for(var i:int = indice ; i < tamanhoIndividuo2 ; ++i){
+				for(i = indice ; i < tamanhoIndividuo2 ; i++){
 					novo1.adicionarOperacao(individuo2.getOperacao(i));
 				}
-				var arr:Array = new Array();
+				/*var arr:Array = new Array();
 				arr.push( novo1 );
-				arr.push( novo2 );
-				return arr;
+				arr.push( novo2 );*/
+				return [novo1,novo2];/*arr;*/
 			}
 			
-			public static  function mutacao (  individuoMutado:Individuo ):Individuo
+			public static  function mutacao (  individuo:Individuo ):Individuo
 			{
-				//		Individuo individuoMutado = individuo.clone();
+				var individuoMutado:Individuo = individuo.clone();
 				var indiceMaximo:int = individuoMutado.quantidadeOperacoes() - 1;
 				
 				var posicaoMutacao1:int = AlgoritmoPG.arredonda(Math.random() * indiceMaximo);
@@ -61,7 +62,7 @@ package br.poli.computacaonatural.pg.operadores
 					var todos:Array = new Array();//new Individuo[populacao.length + populacaoIntermediaria.length];
 					var saida:Array = new Array();//new Individuo[AlgoritmoPG.TAMANHO_POPULACAO];
 					
-					var i:int = 0
+					var i:int = 0;
 					var j:int = 0;
 					
 					for(j = 0 ; j < populacao.length ; i++, j++){
@@ -71,14 +72,12 @@ package br.poli.computacaonatural.pg.operadores
 						todos[i] = populacaoIntermediaria[j];
 					}
 					
-					//todos = ordenaPeloFitness.apply(null,todos);
 					todos = ordenaPeloFitness(todos);
 					
 					j = 0;
 					i = 0;
 					
-					//Pega os 30% melhores
-					//equevale a 60% dos invidiuos da população
+					//Pega os melhores
 					var finalMelhores:int = AlgoritmoPG.TAMANHO_POPULACAO;
 					for(i = 0 ; i < finalMelhores ; i++, j++){
 						saida[j] = todos[i];
@@ -92,7 +91,7 @@ package br.poli.computacaonatural.pg.operadores
 					var todos:Array = new Array();//new Individuo[populacao.length + populacaoIntermediaria.length];
 					var saida:Array = new Array();//new Individuo[AlgoritmoPG.TAMANHO_POPULACAO];
 					
-					var i:int = 0
+					var i:int = 0;
 					var j:int = 0;
 					
 					for(j = 0 ; j < populacao.length ; i++, j++){
@@ -128,7 +127,7 @@ package br.poli.computacaonatural.pg.operadores
 					var inicioPiores:int = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.85 * 2);
 					var finalPiores:int = AlgoritmoPG.arredonda(AlgoritmoPG.TAMANHO_POPULACAO * 0.90 * 2);
 					
-					for(var i:int = inicioPiores ; i < finalPiores ; i++, j++){
+					for(i = inicioPiores ; i < finalPiores ; i++, j++){
 						saida[j] = todos[i];
 					}
 					

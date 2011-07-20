@@ -6,11 +6,12 @@ package br.poli.computacaonatural.pg.representacaoIndividuo
 	import br.poli.computacaonatural.pg.representacaoIndividuo.Operacao;
 	import br.poli.computacaonatural.simulador.Modelo3D;
 	
+	//import com.demonsters.debugger.MonsterDebugger;
+	
 	
 	public class Individuo
 	{
 		
-		 
 		private var listaOperacoes:Vector.<Operacao> ;
 		
 		private var avaliado:Boolean ;
@@ -27,7 +28,7 @@ package br.poli.computacaonatural.pg.representacaoIndividuo
 		}
 		
 		
-		 
+		
 		
 		public function get lista():Array {
 			var arr:Array = new Array()
@@ -52,22 +53,21 @@ package br.poli.computacaonatural.pg.representacaoIndividuo
 					var op:Operacao = this.listaOperacoes[i];
 					var sucesso:int = Modelo3D.executarOperacao(op);
 					if(sucesso == 0){
-						possuiOperacaoInvalida = true;
-						
+						//possuiOperacaoInvalida = true;
+						//MonsterDebugger.trace(this, "Operacao invalida # Eixo:"+op.getEixo()+",Ang:"+op.getAngulo());
 						op.setAngulo(-Math.round(op.getAngulo()/2));
-						//this.avaliado = false;
-						//break;
-						i--
+						i--;
 					}
-					else
-					_fitness.somaDistancias += Modelo3D.calculaDistancia();
+					else{
+						_fitness.somaDistancias += Modelo3D.calculaDistancia();
+					}
 				}
- 
-/*
+				
+				/*
 				if(possuiOperacaoInvalida){
-					_fitness.distanciaFinal = Number.MAX_VALUE;
+				_fitness.distanciaFinal = Number.MAX_VALUE;
 				}else{
-					
+				
 				}
 				*/
 				_fitness.distanciaFinal = Modelo3D.calculaDistancia();
@@ -108,7 +108,6 @@ package br.poli.computacaonatural.pg.representacaoIndividuo
 	}
 }
 
- 
-	 
 
-	  
+
+
