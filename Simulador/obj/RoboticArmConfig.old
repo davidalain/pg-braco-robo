@@ -14,18 +14,18 @@
     </define>
     <define append="true">
       <name>CONFIG::timeStamp</name>
-      <value>'21/06/2011'</value>
+      <value>'20/07/2011'</value>
     </define>
     <source-path append="true">
-      <path-element>E:\POLI\2011.1\Comp Natural\Computação Evolucionária\Projeto\PG\Simulador\src</path-element>
+      <path-element>D:\UPE\2011.1\Computação Natural\pg-braco-robo\Simulador\src</path-element>
       <path-element>C:\Program Files (x86)\FlashDevelop\Library\AS3\classes</path-element>
     </source-path>
     <library-path append="true">
-      <path-element>E:\POLI\2011.1\Comp Natural\Computação Evolucionária\Projeto\PG\Simulador\lib\Materials.swc</path-element>
+      <path-element>D:\UPE\2011.1\Computação Natural\pg-braco-robo\Simulador\lib\Materials.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>
-    <path-element>E:\POLI\2011.1\Comp Natural\Computação Evolucionária\Projeto\PG\Simulador\src\Main.as</path-element>
+    <path-element>D:\UPE\2011.1\Computação Natural\pg-braco-robo\Simulador\src\Simulador.as</path-element>
   </file-specs>
   <default-background-color>#3F52DA</default-background-color>
   <default-frame-rate>60</default-frame-rate>

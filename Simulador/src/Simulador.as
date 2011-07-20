@@ -10,7 +10,7 @@ package {
 	import br.poli.computacaonatural.pg.representacaoIndividuo.Operacao;
 	import br.poli.computacaonatural.simulador.Modelo3D;
 	
-	import com.demonsters.debugger.MonsterDebugger;
+	//import com.demonsters.debugger.MonsterDebugger;
 	
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
@@ -95,10 +95,10 @@ package {
 			this.stage.align = StageAlign.TOP_LEFT;
 			this.stage.scaleMode = StageScaleMode.NO_SCALE;
 			
-			this.serverSocket = new ControleServerSocket ();
-			this.serverSocket.addEventListener (ControleServerSocketEvent.ESCUTANDO, onEscuta);
-			this.serverSocket.addEventListener (ControleServerSocketEvent.CONECTADO, onConectado);
-			this.serverSocket.addEventListener (ControleServerSocketEvent.DADO_CLIENTE, onDadoCliente);
+			//this.serverSocket = new ControleServerSocket ();
+			//this.serverSocket.addEventListener (ControleServerSocketEvent.ESCUTANDO, onEscuta);
+			//this.serverSocket.addEventListener (ControleServerSocketEvent.CONECTADO, onConectado);
+			//this.serverSocket.addEventListener (ControleServerSocketEvent.DADO_CLIENTE, onDadoCliente);
 			//this.serverSocket.iniciar ();
 			
 			//this.arm = new RoboticArmDAE ();
@@ -119,30 +119,30 @@ package {
 			
 			
 			/////////////
-			MonsterDebugger.initialize(this);
+			//MonsterDebugger.initialize(this);
 			
 			Modelo3D.arm = this.arm;
 			Modelo3D.tasks = this.tasks;
 			
-			
-			var algPG:AlgoritmoPG = new AlgoritmoPG();
-		
 			/*
 			*/
-			setTimeout(function(){
+			setTimeout(
+			function():void{
 			
-			var solucao:Individuo = algPG.buscarSolucao();
-			
-			//trace("\nO código pra executar a melhor solução é:\n\n");
-			//trace("---------------------");
-			var RESPOSTA:String= "";
-			for(var i:int = 0 ; i < solucao.quantidadeOperacoes() ; ++i){
-				var op:Operacao = solucao.getOperacao(i);
-				 
-				RESPOSTA += ("this.tasks.push (new Task ("+op.getEixo()+", "+op.getAngulo()+" ) );\n");
-				 
-			}
-			MonsterDebugger.trace(this, RESPOSTA);
+				var algPG:AlgoritmoPG = new AlgoritmoPG();
+				var solucao:Individuo = algPG.buscarSolucao();
+				
+				trace("\nO código pra executar a melhor solução é:\n\n");
+				trace("---------------------");
+				var RESPOSTA:String= "";
+				for(var i:int = 0 ; i < solucao.quantidadeOperacoes() ; ++i){
+					var op:Operacao = solucao.getOperacao(i);
+					 
+					RESPOSTA += ("this.tasks.push (new Task ("+op.getEixo()+", "+op.getAngulo()+" ) );\n");
+					 
+				}
+				//MonsterDebugger.trace(this, RESPOSTA);
+				trace(RESPOSTA);
 			
 			},1000);
 				
